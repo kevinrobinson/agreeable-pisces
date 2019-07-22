@@ -34,6 +34,7 @@ async function init() {
     // const uploadWeightsInput = document.getElementById('upload-weights');
     // model = await tmImage.mobilenet.loadFromFiles(uploadJSONInput.files[0], uploadWeightsInput.files[0])
   
+  document.querySelector('#dump').disabled = 'disabled';
   document.querySelector('#file-selector').addEventListener('change', function(event) {
     readFiles(event, async function(uris) {
       var outs = [];
@@ -42,6 +43,14 @@ async function init() {
         outs.push(out);
       }
       console.log('outs', outs);
+      document.querySelector('#dump').disabled = false;
+      document.querySelector('#dump').addEventListener('click', function(e) {
+        alert(JSON.stringify(outs));
+        console.log(JSON.stringify(outs));
+        const pre = document.createElement('pre');
+        pre.innerText = JSON.stringify(outs);
+        document.body.appendChild(pre);
+      })
     });
   });
 }
@@ -73,7 +82,7 @@ async function predictAndRender(maxPredictions, uri) {
         ${renderBar(prediction[1])}
       </div>`;
       info.innerHTML = html;
-      resolve({html, prediction, uri});
+      resolve({prediction, uri});
     };
     img.src = uri;
   });
