@@ -35,16 +35,27 @@ async function init() {
     // model = await tmImage.mobilenet.loadFromFiles(uploadJSONInput.files[0], uploadWeightsInput.files[0])
   
   document.querySelector('#file-selector').addEventListener('change', function(event) {
-    readFiles(event, function(uris) {
-      outEl.innerHTML = outEl.innerHTML + '\n' + JSON.stringify(uris);
+    readFiles(event, async function(uris) {
+      for (var i = 0; i < uris.length; i++) {
+        await predictAndRender(maxPredictions, uris[i]);
+      }
     });
   });
-                                                            
-//          var fr = new FileReader();
-//         fr.onload = function () {
-//             document.getElementById(outImage).src = fr.result;
-//         }
-//         fr.readAsDataURL(files[0]);
+}
+
+async function predictAndRender(maxPredictions, uri) {
+  const el = document.createElement('div');
+  const info = document.createElement('pre');
+  var img = document.createElement('img');
+  el.appendChild(img);
+  el.appendChild(info);
+  document.body.appendChild(el);
+  img.onload = async function() {
+    const prediction = await model.predict(img, false, maxPredictions);
+    console.log('prediction', prediction);
+    info.innerHTML = JSON.stringify(prediction);
+  };
+  img.src = uri;
 }
 
 async function predictLoop(outEl, maxPredictions) {
@@ -63,14 +74,12 @@ function readFiles(event, next) {
   var uris = [];
   
   [].forEach.call(event.target.files, selectedFile => {
-    var selectedFile = event.target.files[0];
     var reader = new FileReader();
-    reader.onload = function(event) {
-      console.log('onLoad', event);
-      uris.push(event.target.result);
-      if (uris.length >= event.target.files) {
+    reader.onload = function(e) {
+      uris.push(e.target.result);
+      if (uris.length >= event.target.files.length) {
         console.log('next', uris);
-        next(uri);
+        next(uris);
       }
     };
     console.log('selectedFile', selectedFile);
