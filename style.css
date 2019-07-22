@@ -2,7 +2,7 @@
 
 body {
   font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
-  margin: 2em;
+  margin: 1em;
 }
 
 h1 {
@@ -113,6 +113,11 @@ h1 {
 .TileTwo {
   display: flex;
   flex-direction: row;
+}
+
+.TileTwo .Items {
+  height: 600px;
+  overflow-y: scroll;
 }
 
 .TileTwo .Facets {

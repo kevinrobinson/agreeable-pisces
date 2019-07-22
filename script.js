@@ -1,44 +1,23 @@
-/* If you're feeling fancy you can add interactivity 
-    to your site with Javascript */
-
-// the json file (model topology) has a reference to the bin file (model weights)
-const checkpointURL = 'https://storage.googleapis.com/tm-mobilenet/2019072224505fifaexperiment/model.json';
-// the metatadata json file contains the text labels of your model and additional information
-const metadataURL = 'https://storage.googleapis.com/tm-mobilenet/2019072224505fifaexperiment/metadata.json';
-
 let model;
 let webcamEl;
 
-async function init() {
-    // load the model and metadata
-    model = await tmImage.mobilenet.load(checkpointURL, metadataURL);
-    const maxPredictions = model.getTotalClasses();
 
-    const outEl = document.querySelector('.TileTwo');
-  
-    // optional function for creating a webcam
-    // webcam has a square ratio and is flipped by default to match training
-//     const webcamFlipped = true;
-//     webcamEl = await tmImage.getWebcam(200, 200, 'front', webcamFlipped);
-//     webcamEl.play();
-//     document.body.appendChild(webcamEl);
+async function init(modelKey) {
+  // the json file (model topology) has a reference to the bin file (model weights)
+  const checkpointURL = `https://storage.googleapis.com/tm-mobilenet/${modelKey}/model.json`;
+  // the metatadata json file contains the text labels of your model and additional information
+  const metadataURL = `https://storage.googleapis.com/tm-mobilenet/${modelKey}/metadata.json`;
 
-//     // live from camera
-//     predictLoop(outEl);
+  // load the model and metadata
+  model = await tmImage.mobilenet.load(checkpointURL, metadataURL);
+  const maxPredictions = model.getTotalClasses();
 
-  
-    // use tmImage.mobilenet.loadFromFiles() function to support files from a file picker or files from your local hard drive
-    // you need to create File objects, like with file input elements (<input type="file" ...>)
-    // const uploadJSONInput = document.getElementById('upload-json');
-    // const uploadWeightsInput = document.getElementById('upload-weights');
-    // model = await tmImage.mobilenet.loadFromFiles(uploadJSONInput.files[0], uploadWeightsInput.files[0])
-  
+  const outEl = document.querySelector('.TileTwo');
+    
   document.querySelector('#load-dump-json').addEventListener('change', async function(event) {
     const files = await readInputFilesAsText(event.target.files);
     window.files = files;
-    console.log('files[0]', files[0]);
     const items = JSON.parse(files[0]);
-    console.log('items', items);
     renderItems(outEl, maxPredictions, items);
   });
   
@@ -150,9 +129,6 @@ function readFiles(event, next) {
   });
 }
   
-init();
-  
-  
 
 // generic
 async function readInputFilesAsDataURL(files, options = {}) {
@@ -242,3 +218,7 @@ async function createFacetsAtlas(items, width, height) {
   const uri = canvas.toDataURL();
   return {canvas, uri};
 }
+
+document.querySelector('#model-key').change(e => {
+  init(e.target.value);
+});
