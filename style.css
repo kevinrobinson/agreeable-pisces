@@ -9,3 +9,12 @@ h1 {
   font-style: italic;
   color: #373fff;
 }
+
+.Tile {
+  display: block;
+}
+
+.Tile img {
+  max-width: 224px;
+  max-height: 224px;
+}
