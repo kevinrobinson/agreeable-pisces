@@ -123,3 +123,14 @@ h1 {
 .TileTwo .Facets {
   flex: 1;
 }
+
+
+#model-key {
+  width: 250px;
+  font-size: 14px;
+  padding: 6px;
+}
+
+#model-button {
+  margin-right: 20px;
+}

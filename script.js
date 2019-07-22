@@ -1,17 +1,19 @@
-let model;
-let webcamEl;
+var tmImage = window.tmImage;
+var _ = window._;
 
-
-async function init(modelKey) {
+async function loadModel(modelKey) {
   // the json file (model topology) has a reference to the bin file (model weights)
   const checkpointURL = `https://storage.googleapis.com/tm-mobilenet/${modelKey}/model.json`;
   // the metatadata json file contains the text labels of your model and additional information
   const metadataURL = `https://storage.googleapis.com/tm-mobilenet/${modelKey}/metadata.json`;
 
   // load the model and metadata
-  model = await tmImage.mobilenet.load(checkpointURL, metadataURL);
+  const model = await tmImage.mobilenet.load(checkpointURL, metadataURL);
   const maxPredictions = model.getTotalClasses();
+  return {model, maxPredictions};
+}
 
+async function init(model, maxPredictions) {  
   const outEl = document.querySelector('.TileTwo');
     
   document.querySelector('#load-dump-json').addEventListener('change', async function(event) {
@@ -22,29 +24,28 @@ async function init(modelKey) {
   });
   
   document.querySelector('#dump').disabled = 'disabled';
-  document.querySelector('#file-selector').addEventListener('change', function(event) {
-    readFiles(event, async function(uris) {
-      // predict
-      var items = [];
-      for (var i = 0; i < uris.length; i++) {
-        const {prediction} = await predictForUri(maxPredictions, uris[i]);
-        items.push({prediction, uri: uris[i]});
-      }
-      
-      // render
-      renderItems(outEl, maxPredictions, items);
-    
-    
-      // allow dump
-      document.querySelector('#dump').disabled = false;
-      document.querySelector('#dump').addEventListener('click', function(e) {
-        alert(JSON.stringify(items));
-        console.log(JSON.stringify(items));
-        const pre = document.createElement('pre');
-        pre.innerText = JSON.stringify(items, null, 2);
-        outEl.appendChild(pre);
-      })
-    });
+  document.querySelector('#file-selector').addEventListener('change', async function(event) {
+    const uris = readInputFilesAsDataURL(event.target.files);
+    // predict
+    var items = [];
+    for (var i = 0; i < uris.length; i++) {
+      const {prediction} = await predictForUri(model, maxPredictions, uris[i]);
+      items.push({prediction, uri: uris[i]});
+    }
+
+    // render
+    renderItems(outEl, maxPredictions, items);
+
+
+    // allow dump
+    document.querySelector('#dump').disabled = false;
+    document.querySelector('#dump').addEventListener('click', function(e) {
+      alert(JSON.stringify(items));
+      console.log(JSON.stringify(items));
+      const pre = document.createElement('pre');
+      pre.innerText = JSON.stringify(items, null, 2);
+      outEl.appendChild(pre);
+    })
   });
 }
 
@@ -57,7 +58,8 @@ const renderBar = _.template(`<div>
   </div>
 </div>`);
 
-async function predictForUri(maxPredictions, uri) {
+
+async function predictForUri(model, maxPredictions, uri) {
   return new Promise(function(resolve, reject) {
     var img = new Image();
     img.onload = async function() {
@@ -99,20 +101,7 @@ function renderItems(targetEl, maxPredictions, items) {
   facets(facetsEl, items);
 }
 
-
-async function predictLoop(outEl, maxPredictions) {
-
-  // predict can take in an image, video or canvas html element
-  // we set flip to true since the webcam was only flipped in CSS
-  const flip = true;
-  const prediction = await model.predict(webcamEl, flip, maxPredictions);
-  outEl.innerHTML = outEl.innerHTML + '\n' + JSON.stringify(prediction);
-  predictLoop(outEl, maxPredictions);
-}
-
-
 function readFiles(event, next) {
-  console.log('event.target.files', event.target.files);
   var uris = [];
   
   [].forEach.call(event.target.files, selectedFile => {
@@ -120,7 +109,6 @@ function readFiles(event, next) {
     reader.onload = function(e) {
       uris.push(e.target.result);
       if (uris.length >= event.target.files.length) {
-        console.log('next', uris);
         next(uris);
       }
     };
@@ -219,6 +207,16 @@ async function createFacetsAtlas(items, width, height) {
   return {canvas, uri};
 }
 
-document.querySelector('#model-key').change(e => {
-  init(e.target.value);
-});
+
+async function main() {
+  document.querySelector('#model-button').addEventListener('click', async function(e) {
+    document.querySelector('#model-button').disabled = 'disabled';
+    document.querySelector('#model-button').innerHTML = 'Loading...';
+    const modelKey = document.querySelector('#model-key').value;
+    const {model, maxPredictions} = await loadModel(modelKey);
+    document.querySelector('#model-button').innerHTML = 'Loaded.';
+    init(model, maxPredictions);
+  });
+}
+
+main();
