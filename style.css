@@ -34,3 +34,31 @@ h1 {
 .Tile-bar-element {
   height: 20px; 
 }
+
+.Button {
+  padding: 8px;
+  background: #eee;
+  border: 1px solid #ccc;
+  font-size: 12px;
+}
+
+.File {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.File-caption {
+  cursor: pointer;
+}
+
+.File > input {
+  opacity: 0.0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  cursor: pointer;
+}

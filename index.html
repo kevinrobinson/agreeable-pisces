@@ -22,16 +22,15 @@
       You can review how well your image classification model generalizes on new data sets.
     </p>
     
-    <div class="File">
-      <div class="File-caption">Load files...</div>
+    <div class="File Button">
+      <div class="File-caption">Load images</div>
       <input id="file-selector" class="fileList" type="file" accept="image/png, image/jpg, image/jpeg" multiple="">  
     </div>
     
+    <button class="Button" id="dump" disabled="disabled">Save predictions</button>
     
-    <button id="dump" disabled="disabled">dump preJSON</button>
-    
-    <div class="File">
-      <div class="File-caption">Load predictions...</div>
+    <div class="File Button">
+      <div class="File-caption">Load predictions</div>
       <input id="load-dump-json" class="fileList" type="file" accept="application/json">
     </div>
   </body>
