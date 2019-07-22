@@ -99,4 +99,13 @@ h1 {
 .TileTwo .Tile-info > div > div {
   display: inline-block;
   width: 100px;
+  margin-right: 10px;
+}
+
+.TileTwo .Tile-class {
+  font-size: 10px;
+}
+
+.TileTwo .Tile-number {
+  font-size: 10px;
 }

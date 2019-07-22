@@ -62,7 +62,7 @@ async function init() {
         alert(JSON.stringify(items));
         console.log(JSON.stringify(items));
         const pre = document.createElement('pre');
-        pre.innerText = JSON.stringify(items);
+        pre.innerText = JSON.stringify(items, null, 2);
         outEl.appendChild(pre);
       })
     });
@@ -70,7 +70,8 @@ async function init() {
 }
 
 const renderBar = _.template(`<div>
-  <div><%- className %></div>
+  <div class="Tile-class"><%- className %></div>
+  <div class="Tile-number"><%- Math.round(probability*100) %></div>
   <div class="Tile-bar">
     <div class="Tile-bar-element" style="background: green; width: <%- Math.round(probability*100) %>%;"></div>
     <div class="Tile-bar-element"style="background: #ccc; width: <%- 100 - Math.round(probability *100) %>%;"></div>
@@ -91,6 +92,7 @@ async function predictForUri(maxPredictions, uri) {
 
 // items [{prediction, uri}]
 function renderItems(targetEl, maxPredictions, items) {
+  targetEl.innerHTML = '';
   items.forEach(item => {
     const {uri, prediction} = item;
     const el = document.createElement('div');
@@ -102,15 +104,17 @@ function renderItems(targetEl, maxPredictions, items) {
     
     const info = document.createElement('div');
     info.classList.add('Tile-info');
+    const consistentPrediction = _.sortBy(prediction, 'className');
     const html = `<div>
-      ${renderBar(prediction[0])}
-      ${renderBar(prediction[1])}
+      ${consistentPrediction.map(renderBar).join('')}
     </div>`;
     info.innerHTML = html;
     el.appendChild(info);
       
     targetEl.appendChild(el);
   });
+  
+  facets(targetEl, items);
 }
 
 
@@ -171,4 +175,29 @@ async function readInputFilesAsText(files, options = {}) {
       reader.readAsText(file);
     });
   }));
+}
+
+function facets(targetEl, items) {
+  const el = document.createElement('div');
+  el.innerHTML = '<facets-dive width="800" height="600" color-by="feeling" />';
+  targetEl.appendChild(el);
+
+  // flatten
+  var facetsData = items.map(function(item) {
+    return {
+      uri: item.uri,
+      [item.prediction[0].className]: item.prediction[0].probability,
+      [item.prediction[1].className]: item.prediction[1].probability
+    };
+  });
+
+  // config
+  var facetsDiveEl = options.containerEl.querySelector('facets-dive');
+
+  // the order of these calls matters
+  facetsDiveEl.data = facetsData;
+  facetsDiveEl.hideInfoCard = true;
+  facetsDiveEl.colorBy = 'feeling';
+  facetsDiveEl.verticalFacet = 'shape';
+  facetsDiveEl.horizontalFacet = 'color';
 }
