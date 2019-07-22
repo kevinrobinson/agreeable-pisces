@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="/style.css">
     
     <!-- import the webpage's javascript file -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.1.2/dist/tf.min.js"></script>
+<script src="https://storage.googleapis.com/tm-pro/v0.2.0/teachablemachine-image.min.js"></script>
     <script src="/script.js" defer></script>
   </head>  
   <body>
@@ -23,5 +25,7 @@
           to make it easier for folks to view source and remix -->
     <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
     <script src="https://button.glitch.me/button.js"></script>
+    
+    <input id="file-selector" class="fileList" type="file" accept="image/png, image/jpg" multiple="">
   </body>
 </html>
