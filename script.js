@@ -14,8 +14,7 @@ async function init() {
     model = await tmImage.mobilenet.load(checkpointURL, metadataURL);
     const maxPredictions = model.getTotalClasses();
 
-    const outEl = document.createElement('pre');
-    document.body.appendChild(outEl);
+    const outEl = document.querySelector('.TileTwo');
   
     // optional function for creating a webcam
     // webcam has a square ratio and is flipped by default to match training
@@ -40,7 +39,7 @@ async function init() {
     console.log('files[0]', files[0]);
     const items = JSON.parse(files[0]);
     console.log('items', items);
-    renderItems(document.body, maxPredictions, items);
+    renderItems(outEl, maxPredictions, items);
   });
   
   document.querySelector('#dump').disabled = 'disabled';
@@ -54,7 +53,7 @@ async function init() {
       }
       
       // render
-      renderItems(document.body, maxPredictions, items);
+      renderItems(outEl, maxPredictions, items);
     
     
       // allow dump
@@ -64,7 +63,7 @@ async function init() {
         console.log(JSON.stringify(items));
         const pre = document.createElement('pre');
         pre.innerText = JSON.stringify(items);
-        document.body.appendChild(pre);
+        outEl.appendChild(pre);
       })
     });
   });

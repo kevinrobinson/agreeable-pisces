@@ -10,29 +10,9 @@ h1 {
   color: #373fff;
 }
 
-.Tile {
-  display: inline-block;
-  width: 300px;
-}
-
-.Tile img {
-  max-width: 224px;
-  max-height: 224px;
-}
-
-
-.Tile-info {
-  margin: 10px;
-  flex: 4;
-}
-
-.Tile-bar {
+.Toolbar {
   display: flex;
   flex-direction: row;
-}
-
-.Tile-bar-element {
-  height: 20px; 
 }
 
 .Button {
@@ -40,6 +20,7 @@ h1 {
   background: #eee;
   border: 1px solid #ccc;
   font-size: 12px;
+  margin-right: 10px;
 }
 
 .File {
@@ -61,4 +42,61 @@ h1 {
   left: 0;
   right: 0;
   cursor: pointer;
+}
+
+
+
+.TileOne Tile {
+  display: inline-block;
+  width: 300px;
+}
+
+.TileOne .Tile img {
+  max-width: 224px;
+  max-height: 224px;
+}
+
+
+.TileOne .Tile-info {
+  margin: 10px;
+  flex: 4;
+}
+
+.TileOne .Tile-bar {
+  display: flex;
+  flex-direction: row;
+}
+
+.TileOne .Tile-bar-element {
+  height: 20px; 
+}
+
+
+.TileTwo Tile {
+  width: 100%;
+}
+
+.TileTwo .Tile img {
+  display: inline-block;
+  width: 64px;
+}
+
+
+.TileTwo .Tile-info {
+  margin: 10px;
+  display: inline-block;
+}
+
+.TileTwo .Tile-bar {
+  display: flex;
+  flex-direction: row;
+}
+
+.TileTwo .Tile-bar-element {
+  height: 20px; 
+}
+
+.TileTwo .Tile-info > div > div {
+  display: inline-block;
+  width: 100px;
 }
