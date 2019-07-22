@@ -35,31 +35,35 @@ async function init() {
     // model = await tmImage.mobilenet.loadFromFiles(uploadJSONInput.files[0], uploadWeightsInput.files[0])
   
   document.querySelector('#load-dump-json').addEventListener('change', async function(event) {
-    const files = await readInputFiles(event.target.files);
-    const json = JSON.parse(files[0]);
-    var outs = [];
-    for (var i = 0; i < uris.length; i++) {
-      const out = await predictAndRender(maxPredictions, uris[i]);
-      outs.push(out);
-    }
-    console.log('outs', outs);
+    const files = await readInputFilesAsText(event.target.files);
+    window.files = files;
+    console.log('files[0]', files[0]);
+    const items = JSON.parse(files[0]);
+    console.log('items', items);
+    renderItems(document.body, maxPredictions, items);
   });
   
   document.querySelector('#dump').disabled = 'disabled';
   document.querySelector('#file-selector').addEventListener('change', function(event) {
     readFiles(event, async function(uris) {
-      var outs = [];
+      // predict
+      var items = [];
       for (var i = 0; i < uris.length; i++) {
-        const out = await predictAndRender(maxPredictions, uris[i]);
-        outs.push(out);
+        const {prediction} = await predictForUri(maxPredictions, uris[i]);
+        items.push({prediction, uri: uris[i]});
       }
-      console.log('outs', outs);
+      
+      // render
+      renderItems(document.body, maxPredictions, items);
+    
+    
+      // allow dump
       document.querySelector('#dump').disabled = false;
       document.querySelector('#dump').addEventListener('click', function(e) {
-        alert(JSON.stringify(outs));
-        console.log(JSON.stringify(outs));
+        alert(JSON.stringify(items));
+        console.log(JSON.stringify(items));
         const pre = document.createElement('pre');
-        pre.innerText = JSON.stringify(outs);
+        pre.innerText = JSON.stringify(items);
         document.body.appendChild(pre);
       })
     });
@@ -74,25 +78,11 @@ const renderBar = _.template(`<div>
   </div>
 </div>`);
 
-async function predictAndRender(maxPredictions, uri) {
-  const el = document.createElement('div');
-  el.classList.add('Tile');
-  const info = document.createElement('div');
-  info.classList.add('Tile-info');
-  var img = document.createElement('img');
-  el.appendChild(img);
-  el.appendChild(info);
-  document.body.appendChild(el);
+async function predictForUri(maxPredictions, uri) {
   return new Promise(function(resolve, reject) {
+    var img = new Image();
     img.onload = async function() {
       const prediction = await model.predict(img, false, maxPredictions);
-      console.log('prediction', prediction);
-      console.log(JSON.stringify(prediction));
-      const html = `<div>
-        ${renderBar(prediction[0])}
-        ${renderBar(prediction[1])}
-      </div>`;
-      info.innerHTML = html;
       resolve({prediction, uri});
     };
     img.src = uri;
@@ -100,16 +90,16 @@ async function predictAndRender(maxPredictions, uri) {
 }
 
 
-function render(targetEl, maxPredictions, items) {
+// items [{prediction, uri}]
+function renderItems(targetEl, maxPredictions, items) {
   items.forEach(item => {
-    const {uri} = item;
+    const {uri, prediction} = item;
     const el = document.createElement('div');
     el.classList.add('Tile');
 
     var img = document.createElement('img');
     img.src = uri;
     el.appendChild(img);
-    el.appendChild(info);
     
     const info = document.createElement('div');
     info.classList.add('Tile-info');
@@ -118,6 +108,7 @@ function render(targetEl, maxPredictions, items) {
       ${renderBar(prediction[1])}
     </div>`;
     info.innerHTML = html;
+    el.appendChild(info);
       
     targetEl.appendChild(el);
   });
@@ -158,7 +149,7 @@ init();
   
 
 // generic
-async function readInputFiles(files) {
+async function readInputFilesAsDataURL(files, options = {}) {
   return await Promise.all([].map.call(files, file => {
     return new Promise(function(resolve, reject) {
       var reader = new FileReader();
@@ -166,6 +157,19 @@ async function readInputFiles(files) {
         resolve(e.target.result);
       };
       reader.readAsDataURL(file);
+    });
+  }));
+}
+
+// generic
+async function readInputFilesAsText(files, options = {}) {
+  return await Promise.all([].map.call(files, file => {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        resolve(e.target.result);
+      };
+      reader.readAsText(file);
     });
   }));
 }
