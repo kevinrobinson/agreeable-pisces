@@ -92,7 +92,8 @@ async function predictForUri(maxPredictions, uri) {
 
 // items [{prediction, uri}]
 function renderItems(targetEl, maxPredictions, items) {
-  targetEl.innerHTML = '';
+  const itemsEl = targetEl.querySelector('.Items');
+  itemsEl.innerHTML = '';
   items.forEach(item => {
     const {uri, prediction} = item;
     const el = document.createElement('div');
@@ -111,10 +112,12 @@ function renderItems(targetEl, maxPredictions, items) {
     info.innerHTML = html;
     el.appendChild(info);
       
-    targetEl.appendChild(el);
+    itemsEl.appendChild(el);
   });
   
-  facets(targetEl, items);
+  const facetsEl = targetEl.querySelector('.Facets');
+  facetsEl.innerHTML = '';
+  facets(facetsEl, items);
 }
 
 
@@ -177,8 +180,7 @@ async function readInputFilesAsText(files, options = {}) {
   }));
 }
 
-function facets(targetEl, items) {  
-  console.log('facets', items);
+async function facets(targetEl, items) {  
   const el = document.createElement('div');
   el.innerHTML = '<facets-dive width="800" height="600" />';
   targetEl.appendChild(el);
@@ -199,37 +201,43 @@ function facets(targetEl, items) {
   console.log('facetsDiveEl', facetsDiveEl);
   
   // the order of these calls matters
+  const classNames = _.uniq(_.flatMap(items, item => item.prediction.map(p => p.className)));
+  console.log('classNames', classNames);
   facetsDiveEl.data = facetsData;
-  facetsDiveEl.hideInfoCard = true;
-  facetsDiveEl.colorBy = 'women';
-  facetsDiveEl.verticalFacet = 'men';
-  facetsDiveEl.horizontalFacet = 'women';
+  // facetsDiveEl.hideInfoCard = true;
+  facetsDiveEl.colorBy = classNames[0];
+  facetsDiveEl.verticalFacet = classNames[0];
+  facetsDiveEl.horizontalFacet = classNames[1];
   
   // sprite sheet
   // see https://github.com/PAIR-code/facets/tree/master/facets_dive#providing-sprites-for-dive-to-render
-  const {canvas, uri} = createFacetsAtlas(items, 64, 64);
-  console.log('uri', uri);
-  document.body.appendChild(canvas);
+  const {canvas, uri} = await createFacetsAtlas(items, 64, 64);
+  // console.log('uri', uri);
+  // document.body.appendChild(canvas);
   facetsDiveEl.atlasUrl = uri;
   facetsDiveEl.spriteImageWidth = 64;
   facetsDiveEl.spriteImageHeight = 64;
 }
 
-function createFacetsAtlas(items, width, height) {
+async function createFacetsAtlas(items, width, height) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   
   const cols = Math.ceil(Math.sqrt(items.length));
   canvas.width = cols * width;
   canvas.height = cols * width;
-  items.forEach((item, index) => {
+  await Promise.all(items.map((item, index) => {
     const x = width * (index % cols);
     const y = height * Math.floor(index / cols);
-    console.log(x, y);
     const img = new Image();
-    img.onload = function() { context.drawImage(img, x, y, width, height); };
-    img.src = item.uri;
-  });
+    return new Promise(function(resolve, reject) {
+      img.onload = function() {
+        context.drawImage(img, x, y, width, height);
+        resolve();
+      };
+      img.src = item.uri;
+    });
+  }));
   
   const uri = canvas.toDataURL();
   return {canvas, uri};

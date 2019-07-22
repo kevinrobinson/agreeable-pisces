@@ -109,3 +109,12 @@ h1 {
 .TileTwo .Tile-number {
   font-size: 10px;
 }
+
+.TileTwo {
+  display: flex;
+  flex-direction: row;
+}
+
+.TileTwo .Facets {
+  flex: 1;
+}
