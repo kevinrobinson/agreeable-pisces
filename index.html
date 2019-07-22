@@ -5,14 +5,20 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css">
+    
+    <!-- libs -->
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
     
-    <!-- import the webpage's javascript file -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.1.2/dist/tf.min.js"></script>
-<script src="https://storage.googleapis.com/tm-pro/v0.2.0/teachablemachine-image.min.js"></script>
+    <!-- polymer, for facets -->
+    <!-- load webcomponents bundle, which includes all the necessary polyfills -->
+    <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.2.10/webcomponents-bundle.js"></script>
+    <!-- load the element -->
+    <link rel="import" href="./facets-jupyter.html">
+    
+    <!-- teachable machines-->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.1.2/dist/tf.min.js"></script>
+    <script src="https://storage.googleapis.com/tm-pro/v0.2.0/teachablemachine-image.min.js"></script>
     <script src="/script.js" defer></script>
   </head>  
   <body>

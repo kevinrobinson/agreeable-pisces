@@ -178,26 +178,30 @@ async function readInputFilesAsText(files, options = {}) {
 }
 
 function facets(targetEl, items) {
+  console.log('facets', items);
   const el = document.createElement('div');
-  el.innerHTML = '<facets-dive width="800" height="600" color-by="feeling" />';
+  el.innerHTML = '<facets-dive width="800" height="600" />';
   targetEl.appendChild(el);
 
   // flatten
-  var facetsData = items.map(function(item) {
+  var facetsData = items.map(function(item, i) {
     return {
-      uri: item.uri,
+      // uri: item.uri,
+      i,
       [item.prediction[0].className]: item.prediction[0].probability,
       [item.prediction[1].className]: item.prediction[1].probability
     };
   });
+  console.log('facetsData', facetsData);
 
   // config
-  var facetsDiveEl = options.containerEl.querySelector('facets-dive');
+  var facetsDiveEl = targetEl.querySelector('facets-dive');
+  console.log('facetsDiveEl', facetsDiveEl);
 
   // the order of these calls matters
   facetsDiveEl.data = facetsData;
   facetsDiveEl.hideInfoCard = true;
-  facetsDiveEl.colorBy = 'feeling';
-  facetsDiveEl.verticalFacet = 'shape';
-  facetsDiveEl.horizontalFacet = 'color';
+  // facetsDiveEl.colorBy = 'men';
+  // facetsDiveEl.verticalFacet = 'shape';
+  // facetsDiveEl.horizontalFacet = 'color';
 }
