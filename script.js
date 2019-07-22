@@ -178,6 +178,12 @@ async function readInputFilesAsText(files, options = {}) {
 }
 
 function facets(targetEl, items) {
+  // sprite sheet
+  // see https://github.com/PAIR-code/facets/tree/master/facets_dive#providing-sprites-for-dive-to-render
+  createFacetsAtlas(items);
+  
+  return;
+  
   console.log('facets', items);
   const el = document.createElement('div');
   el.innerHTML = '<facets-dive width="800" height="600" />';
@@ -197,11 +203,25 @@ function facets(targetEl, items) {
   // config
   var facetsDiveEl = targetEl.querySelector('facets-dive');
   console.log('facetsDiveEl', facetsDiveEl);
-
+  
   // the order of these calls matters
   facetsDiveEl.data = facetsData;
   facetsDiveEl.hideInfoCard = true;
-  // facetsDiveEl.colorBy = 'men';
-  // facetsDiveEl.verticalFacet = 'shape';
-  // facetsDiveEl.horizontalFacet = 'color';
+  facetsDiveEl.colorBy = 'women';
+  facetsDiveEl.verticalFacet = 'men';
+  facetsDiveEl.horizontalFacet = 'women';
+}
+
+function createFacetsAtlas(items) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  
+  items.forEach((item, index) => {
+    const x = 
+    const img = new Image();
+    img.onload = function() { context.drawImage(img, 0,0,100,100); };
+    img.src = item.uri;
+  });
+  
+  document.body.appendChild(canvas);
 }
