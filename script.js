@@ -34,6 +34,17 @@ async function init() {
     // const uploadWeightsInput = document.getElementById('upload-weights');
     // model = await tmImage.mobilenet.loadFromFiles(uploadJSONInput.files[0], uploadWeightsInput.files[0])
   
+  document.querySelector('#load-dump-json').addEventListener('change', async function(event) {
+    const files = await readInputFiles(event.target.files);
+    const json = JSON.parse(files[0]);
+    var outs = [];
+    for (var i = 0; i < uris.length; i++) {
+      const out = await predictAndRender(maxPredictions, uris[i]);
+      outs.push(out);
+    }
+    console.log('outs', outs);
+  });
+  
   document.querySelector('#dump').disabled = 'disabled';
   document.querySelector('#file-selector').addEventListener('change', function(event) {
     readFiles(event, async function(uris) {
@@ -88,6 +99,31 @@ async function predictAndRender(maxPredictions, uri) {
   });
 }
 
+
+function render(targetEl, maxPredictions, items) {
+  items.forEach(item => {
+    const {uri} = item;
+    const el = document.createElement('div');
+    el.classList.add('Tile');
+
+    var img = document.createElement('img');
+    img.src = uri;
+    el.appendChild(img);
+    el.appendChild(info);
+    
+    const info = document.createElement('div');
+    info.classList.add('Tile-info');
+    const html = `<div>
+      ${renderBar(prediction[0])}
+      ${renderBar(prediction[1])}
+    </div>`;
+    info.innerHTML = html;
+      
+    targetEl.appendChild(el);
+  });
+}
+
+
 async function predictLoop(outEl, maxPredictions) {
 
   // predict can take in an image, video or canvas html element
@@ -120,3 +156,16 @@ function readFiles(event, next) {
 init();
   
   
+
+// generic
+async function readInputFiles(files) {
+  return await Promise.all([].map.call(files, file => {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        resolve(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  }));
+}
