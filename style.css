@@ -11,10 +11,26 @@ h1 {
 }
 
 .Tile {
-  display: block;
+  display: inline-block;
+  width: 300px;
 }
 
 .Tile img {
   max-width: 224px;
   max-height: 224px;
+}
+
+
+.Tile-info {
+  margin: 10px;
+  flex: 4;
+}
+
+.Tile-bar {
+  display: flex;
+  flex-direction: row;
+}
+
+.Tile-bar-element {
+  height: 20px; 
 }

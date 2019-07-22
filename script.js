@@ -36,37 +36,47 @@ async function init() {
   
   document.querySelector('#file-selector').addEventListener('change', function(event) {
     readFiles(event, async function(uris) {
+      var outs = [];
       for (var i = 0; i < uris.length; i++) {
-        await predictAndRender(maxPredictions, uris[i]);
+        const out = await predictAndRender(maxPredictions, uris[i]);
+        outs.push(out);
       }
+      console.log('outs', outs);
     });
   });
 }
 
 const renderBar = _.template(`<div>
   <div><%- className %></div>
-  <div style="background: green; height: 50px; width: <%- Math.round(probability*100) %>%;"></div>
-  <div style="background: #ccc; height: 50px; width: <%- 100 - Math.round(probability *100) %>%;"></div>
+  <div class="Tile-bar">
+    <div class="Tile-bar-element" style="background: green; width: <%- Math.round(probability*100) %>%;"></div>
+    <div class="Tile-bar-element"style="background: #ccc; width: <%- 100 - Math.round(probability *100) %>%;"></div>
+  </div>
 </div>`);
 
 async function predictAndRender(maxPredictions, uri) {
   const el = document.createElement('div');
-  const info = document.createElement('div');
-  var img = document.createElement('img');
   el.classList.add('Tile');
+  const info = document.createElement('div');
+  info.classList.add('Tile-info');
+  var img = document.createElement('img');
   el.appendChild(img);
   el.appendChild(info);
   document.body.appendChild(el);
-  img.onload = async function() {
-    const prediction = await model.predict(img, false, maxPredictions);
-    console.log('prediction', prediction);
-    console.log(JSON.stringify(prediction));
-    info.innerHTML = `<div>
-      ${renderBar(prediction[0])}
-      ${renderBar(prediction[1])}
-    </div>`;
-  };
-  img.src = uri;
+  return new Promise(function(resolve, reject) {
+    img.onload = async function() {
+      const prediction = await model.predict(img, false, maxPredictions);
+      console.log('prediction', prediction);
+      console.log(JSON.stringify(prediction));
+      const html = `<div>
+        ${renderBar(prediction[0])}
+        ${renderBar(prediction[1])}
+      </div>`;
+      info.innerHTML = html;
+      resolve({html, prediction, uri});
+    };
+    img.src = uri;
+  });
 }
 
 async function predictLoop(outEl, maxPredictions) {
