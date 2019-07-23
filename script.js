@@ -178,11 +178,12 @@ async function facets(targetEl, items) {
   // the order of these calls matters
   // only set defaults; otherwise let user interactions stick through renders
   facetsDiveEl.data = facetsData;
+  facetsDiveEl.infoRenderer = facetsInfoRenderer.bind(null, items);
   if (didCreate) {
     facetsDiveEl.hideInfoCard = false;
     facetsDiveEl.colorBy = classNames[0];
     facetsDiveEl.verticalFacet = classNames[0];
-    facetsDiveEl.verticalBuckets = 5;
+    facetsDiveEl.verticalBuckets = 4;
     facetsDiveEl.horizontalFacet = 'searchQuery';
   }
   
@@ -222,6 +223,32 @@ async function createFacetsAtlas(items, width, height) {
   return {canvas, uri};
 }
 
+// see https://github.com/PAIR-code/facets/blob/967e764dd8fbc8327ba9d4e39f3c0d76dce834b9/facets_dive/lib/info-renderers.ts#L26
+function facetsInfoRenderer(items, selectedObject, elem) {
+  // copied
+  const dl = document.createElement('dl');
+  for (const field in selectedObject) {
+    if (!selectedObject.hasOwnProperty(field)) {
+      continue;
+    }
+    const dt = document.createElement('dt');
+    dt.textContent = field;
+    dl.appendChild(dt);
+    const dd = document.createElement('dd');
+    dd.textContent = selectedObject[field];
+    dl.appendChild(dd);
+  }
+  
+  // added
+  const item = _.find(items, item => hash64(item.uri) === selectedObject.hashedURI);
+  if (item) {
+    const img = document.createElement('img');
+    img.crossOrigin = 'Anonymous';
+    img.src = item.uri;
+    dl.appendChild(img);
+  }
+  elem.appendChild(dl);
+};
 
 async function initForModelKey(outEl, modelKey) {
   document.querySelector('#model-button').disabled = 'disabled';

@@ -6,6 +6,7 @@ experimenting with visualizing how well Teachable Machines models generalize to 
 - glitch: [https://glitch.com/edit/#!/agreeable-pisces](https://glitch.com/edit/#!/agreeable-pisces)
 - github: [https://github.com/kevinrobinson/agreeable-pisces](https://github.com/kevinrobinson/agreeable-pisces)
 
+![who is the most shiba}(https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-shiba.png?v=1563923727409)
 # idea
 Can we make a way for people to try out the image classification models they make in Teachable Machines and visualize how they perform on real world data?
 
