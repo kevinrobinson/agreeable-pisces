@@ -1,10 +1,11 @@
 agreeable-pisces
 =================
-experimenting with visualizing how well Teachable Machines models generalize to new data
+experiment to visualize how well your Teachable Machines model generalizes to new data
 
 - demo: [is it a shiba inu or a maine coon cat?](https://agreeable-pisces.glitch.me/?model=2019072393705shibamaincoon10)
 - glitch: [https://glitch.com/edit/#!/agreeable-pisces](https://glitch.com/edit/#!/agreeable-pisces)
 - github: [https://github.com/kevinrobinson/agreeable-pisces](https://github.com/kevinrobinson/agreeable-pisces)
+
 
 ![shiba](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-doge.png?v=1563923727524)
 
@@ -35,11 +36,12 @@ The core idea is to make these tools accessible to young people learning about A
 
 
 ### try it out on new data
-#### from disk:
-![from disk](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-upload.png?v=1563895445234)
-
 #### by searching online:
 ![search](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-search.png?v=1563895443000)
+![more search](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-search-shiba.png?v=1563895443535)
+
+#### from disk:
+![from disk](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-upload.png?v=1563895445234)
 
 ### analyze
 #### see results in Facets Dive
@@ -47,6 +49,7 @@ The core idea is to make these tools accessible to young people learning about A
 
 #### zoom in to individual images
 ![zoom in](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-zoom-shiba.png?v=1563895447030)
+![maine coon shiba](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-cat-as-shiba.png?v=1563925032048)
 
 #### change the layout around
 ![layout](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-rework-facets.png?v=1563895447452)
@@ -67,6 +70,6 @@ The core idea is to make these tools accessible to young people learning about A
 ![load](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-search-for-maine-coon.png?v=1563895444453)
 
 ## example models
-shiba inus & maine coon cats, from [kaggle](https://www.kaggle.com/tanlikesmath/the-oxfordiiit-pet-dataset/downloads/the-oxfordiiit-pet-dataset.zip/1)
+shiba inus & maine coon cats, using the Oxford Pets dataset from [kaggle](https://www.kaggle.com/tanlikesmath/the-oxfordiiit-pet-dataset/downloads/the-oxfordiiit-pet-dataset.zip/1)
 - 2019072393705shibamaincoon10
 - 20190723110514shibamainecoon200
