@@ -1,5 +1,6 @@
 var tmImage = window.tmImage;
 var _ = window._;
+var clipboard = window.clipboard;
 
 
 async function loadModel(modelKey) {
@@ -54,7 +55,6 @@ async function init(outEl, model, maxPredictions) {
 
     // render
     renderItems(outEl, maxPredictions, items);
-    // .then(json => renderResults(document.body, json))
   });
 }
 
@@ -110,17 +110,17 @@ function renderItems(targetEl, maxPredictions, items) {
   facetsEl.innerHTML = '';
   facets(facetsEl, items);
   
-  allowDump(items);
+  allowDump(targetEl, items);
 }
 
 function allowDump(outEl, items) {
   document.querySelector('#dump').disabled = false;
   document.querySelector('#dump').addEventListener('click', function(e) {
-    alert(JSON.stringify(items));
+    var dt = new clipboard.DT();
+    dt.setData("text/plain", JSON.stringify(items));
+    clipboard.write(dt);
     console.log(JSON.stringify(items));
-    const pre = document.createElement('pre');
-    pre.innerText = JSON.stringify(items, null, 2);
-    outEl.appendChild(pre);
+    alert('Copied to the clipboard.');
   })
 }
 
@@ -155,13 +155,13 @@ async function facets(targetEl, items) {
   el.innerHTML = '<facets-dive width="800" height="600" />';
   targetEl.appendChild(el);
 
-  // flatten
+  // flatten, round for UX
   var facetsData = items.map(function(item, i) {
     return {
       // uri: item.uri,
       i,
-      [item.prediction[0].className]: item.prediction[0].probability,
-      [item.prediction[1].className]: item.prediction[1].probability
+      [item.prediction[0].className]: parseFloat(item.prediction[0].probability.toFixed(4)),
+      [item.prediction[1].className]: parseFloat(item.prediction[1].probability.toFixed(4))
     };
   });
 
@@ -180,8 +180,8 @@ async function facets(targetEl, items) {
   // sprite sheet
   // see https://github.com/PAIR-code/facets/tree/master/facets_dive#providing-sprites-for-dive-to-render
   const {canvas, uri} = await createFacetsAtlas(items, 64, 64);
-  // console.log('uri', uri);
-  // document.body.appendChild(canvas);
+  console.log('uri', uri);
+  document.body.appendChild(canvas);
   facetsDiveEl.atlasUrl = uri;
   facetsDiveEl.spriteImageWidth = 64;
   facetsDiveEl.spriteImageHeight = 64;
