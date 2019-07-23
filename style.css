@@ -13,6 +13,10 @@ h1 {
 .Toolbar {
   display: flex;
   flex-direction: row;
+  
+  border-bottom: 1px solid #ccc;
+  justify-content: space-between;
+  padding-bottom: 20px;
 }
 
 .Button {
@@ -133,4 +137,34 @@ h1 {
 
 #model-button {
   margin-right: 20px;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.Label {
+  color: #962565;
+  margin-right: 10px;
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.SectionActions {
+  display: flex;
+}
+
+.Header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Header > p {
+  flex: 1;
+  margin-left: 20px;
 }

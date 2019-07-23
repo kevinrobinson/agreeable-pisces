@@ -22,16 +22,17 @@
     <script src="/script.js" defer></script>
   </head>  
   <body>
-    <h1>Hi there!</h1>
-    
-    <p>
-      Try out the image classification model you created with Teachable Machines, and see how it generalizes to new data sets.
-    </p>
+    <div class="Header">
+      <h1>hello!</h1>  
+      <p>
+        Try out your <a href="https://teachable-machine-pro.appspot.com/train/image" target="_blank" rel="noopener noreferrer">Teachable Machines</a> image classification model with new images, and see how well it generalizes!
+      </p>
+    </div>
     
     
     <div class="Toolbar">
       <section>
-        <div class="Label">model:</div>
+        <div class="Label">1. Load trained model</div>
         <div class="Model">
           <input id="model-key" type="text" value="2019072224505fifaexperiment" />
           <button class="Button" id="model-button">Use model</button>
@@ -39,22 +40,24 @@
       </section>
       
       <section>
-        <div class="Label">generalization data:</div>
-        <div class="File Button">
-          <div class="File-caption">Load from disk</div>
-          <input id="file-selector" class="fileList" type="file" accept="image/png, image/jpg, image/jpeg" multiple="">  
+        <div class="Label">2. Try new data</div>
+        <div class="SectionActions">
+          <div class="File Button">
+            <div class="File-caption">Load from disk</div>
+            <input id="file-selector" class="fileList" type="file" accept="image/png, image/jpg, image/jpeg" multiple="">  
+          </div>
+          <button class="Button" id="search">Search online</button>
         </div>
-
-        <button class="Button" id="search">Search online</button>
       </section>
 
       <section>
-        <div class="Label">analysis:</div>
-        <button class="Button" id="dump" disabled="disabled">Save</button>
-
-        <div class="File Button">
-          <div class="File-caption">Load</div>
-          <input id="load-dump-json" class="fileList" type="file" accept="application/json">
+        <div class="Label">3. Share your analysis</div>
+        <div class="SectionActions">
+          <button class="Button" id="dump" disabled="disabled">Save</button>
+          <div class="File Button">
+            <div class="File-caption">Load</div>
+            <input id="load-dump-json" class="fileList" type="file" accept="application/json">
+          </div>
         </div>
       </section>
     </div>
