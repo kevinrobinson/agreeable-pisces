@@ -55,7 +55,12 @@ async function init(outEl, model, maxPredictions) {
     // predict
     for (var i = 0; i < files.length; i++) {
       const {prediction} = await predictForUri(model, maxPredictions, files[i].uri);
-      items.push({prediction, uri: files[i].uri, filename: files[i].filename});
+      items.push({
+        prediction,
+        uri: files[i].uri,
+        filename: files[i].filename,
+        filenameLabel: guessFilenameLabel(files[i].filename)
+      });
     }
 
     // render
@@ -116,7 +121,10 @@ function allowDump(outEl, items) {
   })
 }
 
-
+// eg 'english_setter_2.jpg'
+function guessFilenameLabel(filename) {
+  return filename.split(/[\._]/).slice(0, -1).filter(s => !s.match(/\d+/)).join('_');
+}
 
 
 
@@ -127,7 +135,9 @@ async function facets(targetEl, items) {
     return {
       i,
       hashedURI: hash64(item.uri),
+      fromSource: (item.filename ? 'file' : item.query ? 'search' : 'unknown'),
       filename: item.filename || 'none',
+      filenameLabel: item.filenameLabel || 'none',
       searchQuery: item.query || 'none',
       [item.prediction[0].className]: parseFloat(item.prediction[0].probability.toFixed(4)),
       [item.prediction[1].className]: parseFloat(item.prediction[1].probability.toFixed(4))
@@ -198,6 +208,18 @@ async function createFacetsAtlas(items, width, height) {
 function facetsInfoRenderer(items, selectedObject, elem) {
   // copied
   const dl = document.createElement('dl');
+  
+  // inserted
+  const item = _.find(items, item => hash64(item.uri) === selectedObject.hashedURI);
+  if (item) {
+    const img = document.createElement('img');
+    img.crossOrigin = 'Anonymous';
+    img.src = item.uri;
+    img.style.width = '100%';
+    dl.appendChild(img);
+  }
+  
+  // copied
   for (const field in selectedObject) {
     if (!selectedObject.hasOwnProperty(field)) {
       continue;
@@ -210,14 +232,6 @@ function facetsInfoRenderer(items, selectedObject, elem) {
     dl.appendChild(dd);
   }
   
-  // added
-  const item = _.find(items, item => hash64(item.uri) === selectedObject.hashedURI);
-  if (item) {
-    const img = document.createElement('img');
-    img.crossOrigin = 'Anonymous';
-    img.src = item.uri;
-    dl.appendChild(img);
-  }
   elem.appendChild(dl);
 };
 
