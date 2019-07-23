@@ -75,7 +75,7 @@ async function predictForUri(model, maxPredictions, uri) {
       const prediction = await model.predict(img, false, maxPredictions);
       resolve({prediction, uri});
     };
-    img.crossOrigin = "Anonymous"; // allow images from google search to be read by model
+    img.crossOrigin = "Anonymous"; // allow images from search to be read by model
     img.src = uri;
   });
 }
@@ -120,7 +120,9 @@ function allowDump(outEl, items) {
     dt.setData("text/plain", JSON.stringify(items));
     clipboard.write(dt);
     console.log(JSON.stringify(items));
-    alert('Copied to the clipboard.');
+    // download('data:application/json,' + JSON.stringify(items), 'dump.json');
+    alert('Downloaded and copied to the clipboard.');
+    download('data:image/jpeg,' + items[0].uri, 'img.jpg');
   })
 }
 
@@ -170,7 +172,6 @@ async function facets(targetEl, items) {
   
   // the order of these calls matters
   const classNames = _.uniq(_.flatMap(items, item => item.prediction.map(p => p.className)));
-  console.log('classNames', classNames);
   facetsDiveEl.data = facetsData;
   facetsDiveEl.hideInfoCard = false;
   facetsDiveEl.colorBy = classNames[0];
@@ -179,9 +180,10 @@ async function facets(targetEl, items) {
   
   // sprite sheet
   // see https://github.com/PAIR-code/facets/tree/master/facets_dive#providing-sprites-for-dive-to-render
+  // 64x64 is the assumption
   const {canvas, uri} = await createFacetsAtlas(items, 64, 64);
-  console.log('uri', uri);
-  document.body.appendChild(canvas);
+  // console.log('uri', uri);
+  // document.body.appendChild(canvas);
   facetsDiveEl.atlasUrl = uri;
   facetsDiveEl.spriteImageWidth = 64;
   facetsDiveEl.spriteImageHeight = 64;
@@ -203,6 +205,7 @@ async function createFacetsAtlas(items, width, height) {
         context.drawImage(img, x, y, width, height);
         resolve();
       };
+      img.crossOrigin = 'Anonymous'; // allow images from search
       img.src = item.uri;
     });
   }));
@@ -287,4 +290,13 @@ function renderResults(targetEl, json) {
   });
 }
 
+function download(uri, filename) {
+  var a = document.createElement("a");
+  a.href = uri;
+  a.setAttribute("download", filename);
+  a.click();
+  return false;
+}
+
 main();
+
