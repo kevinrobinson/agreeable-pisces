@@ -121,7 +121,6 @@ function allowDump(outEl, items) {
     clipboard.write(dt);
     console.log(JSON.stringify(items));
     download('data:application/json,' + JSON.stringify(items), 'analysis.json');
-    // download('data:image/jpeg,' + items[0].uri, 'img.jpg');
   })
 }
 
@@ -159,8 +158,8 @@ async function facets(targetEl, items) {
   // flatten, round for UX
   var facetsData = items.map(function(item, i) {
     return {
-      // uri: item.uri,
       i,
+      uri: item.uri,
       [item.prediction[0].className]: parseFloat(item.prediction[0].probability.toFixed(4)),
       [item.prediction[1].className]: parseFloat(item.prediction[1].probability.toFixed(4))
     };
