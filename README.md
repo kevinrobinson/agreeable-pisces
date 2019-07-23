@@ -1,8 +1,19 @@
 agreeable-pisces
 =================
-experimenting with seeing how well Teachable Machines models generalize
+experimenting with visualizing how well Teachable Machines models generalize to new data
 
+# idea
+Can we make a way for people to try out the image classification models they make in Teachable Machines or real world data?
 
+# what this does
+This project loads a trained model, then can get new data from disk or by searching online.  It embeds [Facets Dive](https://github.com/PAIR-code/facets/tree/master/facets_dive) to start visualizing the results.
+
+# what else would be cool
+If we could add in more attributes (eg, upload a CSV) or if Teachable Machines supported bundling other labeled attributes, we could visualize those here as well.  But there may be some we can figure out automatically, in ways that are related to what Teachable Machines is doing too (eg, run plain MobileNet on each image and add those labels).  
+
+This would let us add more accessible tools for things like subgroup analysis, and would let more non-technical people visualize and understand the social aspects of fairness questions.  Or add in counterfactuals or other parts of tools like the what-if tool ([paper](https://arxiv.org/abs/1907.04135)), especially with generating counterfactual or adversarial images.  Or maybe pull out automated "prototypes" or "criticisms" (eg, [Kim et al](http://people.csail.mit.edu/beenkim/papers/KIM2016NIPS_MMD.pdf)).  
+
+The core idea is to make these tools accessible to young people learning about AI, as a way to demonstrate how this is how you do the work; you can't do AI without it.
 
 
 # screenshots
