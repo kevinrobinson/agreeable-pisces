@@ -135,10 +135,6 @@ h1 {
   padding: 6px;
 }
 
-#model-button {
-  margin-right: 20px;
-}
-
 section {
   display: flex;
   flex-direction: column;
@@ -167,4 +163,25 @@ section {
 .Header > p {
   flex: 1;
   margin-left: 20px;
+}
+
+.load-example-link {
+  font-size: 12px;
+}
+
+.Spinner {
+  animation: Spinner-spin infinite 1s linear;
+  height: 48px;
+  width: 48px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+@keyframes Spinner-spin {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
 }

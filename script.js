@@ -23,13 +23,13 @@ async function init(outEl, model, maxPredictions) {
   
   // load images
   document.querySelector('#file-selector').addEventListener('change', async function(event) {
-    const uris = await readInputFilesAsDataURL(event.target.files);
-    console.log('loaded uris:', uris.length);
+    const files = await readInputFilesAsDataURL(event.target.files);
+    console.log('loaded uris:', files.length);
     
     // predict
-    for (var i = 0; i < uris.length; i++) {
-      const {prediction} = await predictForUri(model, maxPredictions, uris[i]);
-      items.push({prediction, uri: uris[i]});
+    for (var i = 0; i < files.length; i++) {
+      const {prediction} = await predictForUri(model, maxPredictions, files[i].uri);
+      items.push({prediction, uri: files[i].uri[i], filename: files[i].filesnames[i]});
     }
 
     // render
@@ -50,7 +50,7 @@ async function init(outEl, model, maxPredictions) {
     // predict
     for (var i = 0; i < uris.length; i++) {
       const {prediction} = await predictForUri(model, maxPredictions, uris[i]);
-      items.push({prediction, uri: uris[i]});
+      items.push({prediction, uri: uris[i], query});
     }
 
     // render
@@ -130,7 +130,7 @@ async function readInputFilesAsDataURL(files) {
     return new Promise(function(resolve, reject) {
       var reader = new FileReader();
       reader.onload = function(e) {
-        resolve(e.target.result);
+        resolve({uri: e.target.result, filename: file.name});
       };
       reader.readAsDataURL(file);
     });
@@ -159,7 +159,9 @@ async function facets(targetEl, items) {
   var facetsData = items.map(function(item, i) {
     return {
       i,
-      uri: item.uri,
+      hashedURI: hash64(item.uri),
+      filename: item.filename || 'none',
+      searchQuery: item.query || 'none',
       [item.prediction[0].className]: parseFloat(item.prediction[0].probability.toFixed(4)),
       [item.prediction[1].className]: parseFloat(item.prediction[1].probability.toFixed(4))
     };
@@ -294,6 +296,10 @@ function download(uri, filename) {
   a.setAttribute("download", filename);
   a.click();
   return false;
+}
+
+function hash64(str) {
+  return window.CryptoJS.MD5(str).toString(window.CryptoJS.enc.Base64);
 }
 
 main();
