@@ -120,7 +120,8 @@ function allowDump(outEl, items) {
     dt.setData("text/plain", JSON.stringify(items));
     clipboard.write(dt);
     console.log(JSON.stringify(items));
-    download('data:image/jpeg,' + items[0].uri, 'img.jpg');
+    download('data:application/json,' + JSON.stringify(items), 'analysis.json');
+    // download('data:image/jpeg,' + items[0].uri, 'img.jpg');
   })
 }
 
