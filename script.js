@@ -194,14 +194,7 @@ async function main() {
     renderItems(outEl, predictionsCount, items);
   });
   
-  document.querySelector('#model-button').addEventListener('click', async function(e) {
-    document.querySelector('#model-button').disabled = 'disabled';
-    document.querySelector('#model-button').innerHTML = 'Loading...';
-    const modelKey = document.querySelector('#model-key').value;
-    const {model, maxPredictions} = await loadModel(modelKey);
-    document.querySelector('#model-button').innerHTML = 'Loaded.';
-    init(outEl, model, maxPredictions);
-  });
+  document.querySelector('#model-button').addEventListener('click', );
 }
 
 main();
