@@ -43,6 +43,7 @@ async function init(outEl, model, maxPredictions) {
     
     const json = await fetchJson(query, 'abc');
     const uris = (json.items || []).map(item => item.image.thumbnailLink);
+    // const uris = (json.items || []).map(item => item.link);
     console.log(' searched uris:', uris.length);
 
     // predict
@@ -74,6 +75,7 @@ async function predictForUri(model, maxPredictions, uri) {
       const prediction = await model.predict(img, false, maxPredictions);
       resolve({prediction, uri});
     };
+    img.crossOrigin = "Anonymous"; // allow images from google search to be read by model
     img.src = uri;
   });
 }
