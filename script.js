@@ -3,6 +3,32 @@ var _ = window._;
 var clipboard = window.clipboard;
 
 
+async function main() {
+  const outEl = document.querySelector('.TileTwo');
+
+  // init from query string
+  const queryString = window.location.search;
+  if (queryString.indexOf('?model=') === 0) {
+    const modelKey = queryString.slice(6).replace(/[^a-zA-Z0-9]/g,'');
+    document.querySelector('#model-key').value = modelKey;
+    initForModelKey(outEl, modelKey);
+  }
+  
+  // handler for loading model
+  document.querySelector('#model-button').addEventListener('click', e => {
+    const modelKey = document.querySelector('#model-key').value;
+    initForModelKey(outEl, modelKey);
+  });
+
+  // dump out predictions
+  document.querySelector('#load-dump-json').addEventListener('change', async function(event) {
+    const files = await readInputFilesAsText(event.target.files);
+    const items = JSON.parse(files[0]);
+    const predictionsCount = _.uniq(_.flatMap(items, item => item.prediction.map(p => p.className)));
+    renderItems(outEl, predictionsCount, items);
+  });
+}
+
 async function loadModel(modelKey) {
   // the json file (model topology) has a reference to the bin file (model weights)
   const checkpointURL = `https://storage.googleapis.com/tm-mobilenet/${modelKey}/model.json`;
@@ -24,12 +50,12 @@ async function init(outEl, model, maxPredictions) {
   // load images
   document.querySelector('#file-selector').addEventListener('change', async function(event) {
     const files = await readInputFilesAsDataURL(event.target.files);
-    console.log('loaded uris:', files.length);
+    console.log('  loaded files:', files.length);
     
     // predict
     for (var i = 0; i < files.length; i++) {
       const {prediction} = await predictForUri(model, maxPredictions, files[i].uri);
-      items.push({prediction, uri: files[i].uri[i], filename: files[i].filesnames[i]});
+      items.push({prediction, uri: files[i].uri, filename: files[i].filename});
     }
 
     // render
@@ -45,7 +71,7 @@ async function init(outEl, model, maxPredictions) {
     const json = await fetchJson(query, 'abc');
     const uris = (json.items || []).map(item => item.image.thumbnailLink);
     // const uris = (json.items || []).map(item => item.link);
-    console.log(' searched uris:', uris.length);
+    console.log(' search results:', uris.length);
 
     // predict
     for (var i = 0; i < uris.length; i++) {
@@ -57,15 +83,6 @@ async function init(outEl, model, maxPredictions) {
     renderItems(outEl, maxPredictions, items);
   });
 }
-
-const renderBar = _.template(`<div>
-  <div class="Tile-class"><%- className %></div>
-  <div class="Tile-number"><%- Math.round(probability*100) %></div>
-  <div class="Tile-bar">
-    <div class="Tile-bar-element" style="background: green; width: <%- Math.round(probability*100) %>%;"></div>
-    <div class="Tile-bar-element"style="background: #ccc; width: <%- 100 - Math.round(probability *100) %>%;"></div>
-  </div>
-</div>`);
 
 
 async function predictForUri(model, maxPredictions, uri) {
@@ -83,33 +100,8 @@ async function predictForUri(model, maxPredictions, uri) {
 
 // items [{prediction, uri}]
 function renderItems(targetEl, maxPredictions, items) {
-  const itemsEl = targetEl.querySelector('.Items');
-  itemsEl.innerHTML = '';
-  items.forEach(item => {
-    const {uri, prediction} = item;
-    const el = document.createElement('div');
-    el.classList.add('Tile');
-
-    var img = document.createElement('img');
-    img.src = uri;
-    el.appendChild(img);
-    
-    const info = document.createElement('div');
-    info.classList.add('Tile-info');
-    const consistentPrediction = _.sortBy(prediction, 'className');
-    const html = `<div>
-      ${consistentPrediction.map(renderBar).join('')}
-    </div>`;
-    info.innerHTML = html;
-    el.appendChild(info);
-      
-    itemsEl.appendChild(el);
-  });
-  
   const facetsEl = targetEl.querySelector('.Facets');
-  // facetsEl.innerHTML = '';
   facets(facetsEl, items);
-  
   allowDump(targetEl, items);
 }
 
@@ -124,32 +116,11 @@ function allowDump(outEl, items) {
   })
 }
 
-// generic
-async function readInputFilesAsDataURL(files) {
-  return await Promise.all([].map.call(files, file => {
-    return new Promise(function(resolve, reject) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        resolve({uri: e.target.result, filename: file.name});
-      };
-      reader.readAsDataURL(file);
-    });
-  }));
-}
 
-// generic
-async function readInputFilesAsText(files) {
-  return await Promise.all([].map.call(files, file => {
-    return new Promise(function(resolve, reject) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        resolve(e.target.result);
-      };
-      reader.readAsText(file);
-    });
-  }));
-}
 
+
+
+// facets
 async function facets(targetEl, items) {
   // flatten data, round numbers for UX
   const facetsData = items.map(function(item, i) {
@@ -169,7 +140,7 @@ async function facets(targetEl, items) {
   var didCreate = false;
   if (!facetsDiveEl) {
     const el = document.createElement('div');
-    el.innerHTML = '<facets-dive width="800" height="600" />';
+    el.innerHTML = '<facets-dive width="100%" height="600" />';
     targetEl.appendChild(el);
     facetsDiveEl = targetEl.querySelector('facets-dive');
     didCreate = true;
@@ -258,35 +229,10 @@ async function initForModelKey(outEl, modelKey) {
   init(outEl, model, maxPredictions);
 }
 
-async function main() {
-  const outEl = document.querySelector('.TileTwo');
 
-  // init from query string
-  const queryString = window.location.search;
-  if (queryString.indexOf('?model=') === 0) {
-    const modelKey = queryString.slice(6).replace(/[^a-zA-Z0-9]/g,'');
-    document.querySelector('#model-key').value = modelKey;
-    initForModelKey(outEl, modelKey);
-  }
-  
-  // handler for loading model
-  document.querySelector('#model-button').addEventListener('click', e => {
-    const modelKey = document.querySelector('#model-key').value;
-    initForModelKey(outEl, modelKey);
-  });
-
-  // dump out predictions
-  document.querySelector('#load-dump-json').addEventListener('change', async function(event) {
-    const files = await readInputFilesAsText(event.target.files);
-    const items = JSON.parse(files[0]);
-    const predictionsCount = _.uniq(_.flatMap(items, item => item.prediction.map(p => p.className)));
-    renderItems(outEl, predictionsCount, items);
-  });
-}
 
 
 // search stuff
-
 function readDomainFromEnv() {
   return 'https://services-edu.herokuapp.com';
 }
@@ -325,6 +271,10 @@ function renderResults(targetEl, json) {
   });
 }
 
+
+
+
+// util bits
 function download(uri, filename) {
   var a = document.createElement("a");
   a.href = uri;
@@ -337,5 +287,29 @@ function hash64(str) {
   return window.CryptoJS.MD5(str).toString(window.CryptoJS.enc.Base64);
 }
 
-main();
+async function readInputFilesAsDataURL(files) {
+  return await Promise.all([].map.call(files, file => {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        resolve({uri: e.target.result, filename: file.name});
+      };
+      reader.readAsDataURL(file);
+    });
+  }));
+}
 
+async function readInputFilesAsText(files) {
+  return await Promise.all([].map.call(files, file => {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        resolve(e.target.result);
+      };
+      reader.readAsText(file);
+    });
+  }));
+}
+
+
+main();

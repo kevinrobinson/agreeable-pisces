@@ -6,7 +6,9 @@ experimenting with visualizing how well Teachable Machines models generalize to 
 - glitch: [https://glitch.com/edit/#!/agreeable-pisces](https://glitch.com/edit/#!/agreeable-pisces)
 - github: [https://github.com/kevinrobinson/agreeable-pisces](https://github.com/kevinrobinson/agreeable-pisces)
 
-![who is the most shiba}(https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-shiba.png?v=1563923727409)
+![shiba](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-doge.png?v=1563923727524)
+
+
 # idea
 Can we make a way for people to try out the image classification models they make in Teachable Machines and visualize how they perform on real world data?
 
@@ -51,6 +53,11 @@ The core idea is to make these tools accessible to young people learning about A
 
 #### bucket by search term
 ![bucket](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2FScreen%20Shot%202019-07-23%20at%206.47.57%20PM.png?v=1563922097962)
+![shiba](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-doge.png?v=1563923727524)
+
+#### color in the most shiba of shibas
+![who is the most shiba](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-shiba.png?v=1563923727409)
+
 
 ### share
 #### save
