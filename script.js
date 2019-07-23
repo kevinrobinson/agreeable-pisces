@@ -17,12 +17,15 @@ async function loadModel(modelKey) {
 
 async function init(outEl, model, maxPredictions) {  
   document.querySelector('#dump').disabled = 'disabled';
+  
+  var items = [];
+  
+  // load images
   document.querySelector('#file-selector').addEventListener('change', async function(event) {
     const uris = await readInputFilesAsDataURL(event.target.files);
-    console.log('uris', uris.length);
+    console.log('loaded uris:', uris.length);
     
     // predict
-    var items = [];
     for (var i = 0; i < uris.length; i++) {
       const {prediction} = await predictForUri(model, maxPredictions, uris[i]);
       items.push({prediction, uri: uris[i]});
@@ -30,17 +33,27 @@ async function init(outEl, model, maxPredictions) {
 
     // render
     renderItems(outEl, maxPredictions, items);
+  });
+  
+  // search
+  document.querySelector('#search').addEventListener('click', async function(e) {
+    const query = prompt('Search for:');
+    if (!query) return;
+    
+    
+    const json = await fetchJson(query, 'abc');
+    const uris = (json.items || []).map(item => item.image.thumbnailLink);
+    console.log(' searched uris:', uris.length);
 
+    // predict
+    for (var i = 0; i < uris.length; i++) {
+      const {prediction} = await predictForUri(model, maxPredictions, uris[i]);
+      items.push({prediction, uri: uris[i]});
+    }
 
-    // allow dump
-    document.querySelector('#dump').disabled = false;
-    document.querySelector('#dump').addEventListener('click', function(e) {
-      alert(JSON.stringify(items));
-      console.log(JSON.stringify(items));
-      const pre = document.createElement('pre');
-      pre.innerText = JSON.stringify(items, null, 2);
-      outEl.appendChild(pre);
-    })
+    // render
+    renderItems(outEl, maxPredictions, items);
+    // .then(json => renderResults(document.body, json))
   });
 }
 
@@ -94,8 +107,20 @@ function renderItems(targetEl, maxPredictions, items) {
   const facetsEl = targetEl.querySelector('.Facets');
   facetsEl.innerHTML = '';
   facets(facetsEl, items);
+  
+  allowDump(items);
 }
 
+function allowDump(outEl, items) {
+  document.querySelector('#dump').disabled = false;
+  document.querySelector('#dump').addEventListener('click', function(e) {
+    alert(JSON.stringify(items));
+    console.log(JSON.stringify(items));
+    const pre = document.createElement('pre');
+    pre.innerText = JSON.stringify(items, null, 2);
+    outEl.appendChild(pre);
+  })
+}
 
 // generic
 async function readInputFilesAsDataURL(files) {
@@ -216,6 +241,47 @@ async function main() {
     const items = JSON.parse(files[0]);
     const predictionsCount = _.uniq(_.flatMap(items, item => item.prediction.map(p => p.className)));
     renderItems(outEl, predictionsCount, items);
+  });
+}
+
+
+// search stuff
+
+function readDomainFromEnv() {
+  return 'https://services-edu.herokuapp.com';
+}
+
+function fetchJson(query, apiKey) {
+    const domain = readDomainFromEnv();
+    const headers = {'X-Services-Edu-Api-Key': apiKey};
+    const url = `${domain}/images/search?q=${encodeURIComponent(query)}`;
+    return fetch(url, {headers})
+      .then(response => response.json());
+}
+
+function renderResults(targetEl, json) {
+  targetEl.innerHTML = '';
+  
+  (json.items || []).forEach(item => {
+    const el = document.createElement('div');
+
+    const img = document.createElement('img');
+    img.classList.add('ImageSearch-image');
+    img.src = item.image.thumbnailLink;
+    img.alt = item.title;
+    img.width = item.image.thumbnailWidth;
+    img.height = item.image.thumbnailHeight;
+    el.appendChild(img);
+
+    const source = document.createElement('div');
+    source.classList.add('ImageSearch-image-source');
+    source.target = '_blank';
+    source.rel = 'noopener noreferrer';
+    source.href = item.image.contextLink;
+    source.text = item.displayLink;
+    el.appendChild(source);
+    
+    targetEl.appendChild(el);
   });
 }
 
