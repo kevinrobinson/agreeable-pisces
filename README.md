@@ -1,6 +1,7 @@
 agreeable-pisces
 =================
 experimenting with visualizing how well Teachable Machines models generalize to new data
+[https://github.com/kevinrobinson/agreeable-pisces](https://github.com/kevinrobinson/agreeable-pisces)
 
 # idea
 Can we make a way for people to try out the image classification models they make in Teachable Machines or real world data?
