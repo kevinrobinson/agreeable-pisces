@@ -3,6 +3,7 @@ agreeable-pisces
 experimenting with visualizing how well Teachable Machines models generalize to new data
 
 - demo: [is it a shiba inu or a maine coon cat?](https://agreeable-pisces.glitch.me/?model=2019072393705shibamaincoon10)
+- glitch: [https://glitch.com/edit/#!/agreeable-pisces](https://glitch.com/edit/#!/agreeable-pisces)
 - github: [https://github.com/kevinrobinson/agreeable-pisces](https://github.com/kevinrobinson/agreeable-pisces)
 
 # idea
@@ -46,6 +47,9 @@ The core idea is to make these tools accessible to young people learning about A
 
 #### change the layout around
 ![layout](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-rework-facets.png?v=1563895447452)
+
+#### bucket by search term
+![bucket](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2FScreen%20Shot%202019-07-23%20at%206.47.57%20PM.png?v=1563922097962)
 
 ### share
 #### save

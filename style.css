@@ -168,20 +168,3 @@ section {
 .load-example-link {
   font-size: 12px;
 }
-
-.Spinner {
-  animation: Spinner-spin infinite 1s linear;
-  height: 48px;
-  width: 48px;
-  pointer-events: none;
-  opacity: 0.8;
-}
-
-@keyframes Spinner-spin {
-  from {
-    transform: rotate(360deg);
-  }
-  to {
-    transform: rotate(0deg);
-  }
-}
