@@ -1,6 +1,7 @@
 var tmImage = window.tmImage;
 var _ = window._;
 
+
 async function loadModel(modelKey) {
   // the json file (model topology) has a reference to the bin file (model weights)
   const checkpointURL = `https://storage.googleapis.com/tm-mobilenet/${modelKey}/model.json`;
@@ -12,6 +13,7 @@ async function loadModel(modelKey) {
   const maxPredictions = model.getTotalClasses();
   return {model, maxPredictions};
 }
+
 
 async function init(model, maxPredictions) {  
   const outEl = document.querySelector('.TileTwo');
@@ -25,7 +27,9 @@ async function init(model, maxPredictions) {
   
   document.querySelector('#dump').disabled = 'disabled';
   document.querySelector('#file-selector').addEventListener('change', async function(event) {
-    const uris = readInputFilesAsDataURL(event.target.files);
+    const uris = await readInputFilesAsDataURL(event.target.files);
+    console.log('uris', uris.length);
+    
     // predict
     var items = [];
     for (var i = 0; i < uris.length; i++) {
@@ -101,22 +105,6 @@ function renderItems(targetEl, maxPredictions, items) {
   facets(facetsEl, items);
 }
 
-function readFiles(event, next) {
-  var uris = [];
-  
-  [].forEach.call(event.target.files, selectedFile => {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      uris.push(e.target.result);
-      if (uris.length >= event.target.files.length) {
-        next(uris);
-      }
-    };
-    console.log('selectedFile', selectedFile);
-    reader.readAsDataURL(selectedFile);
-  });
-}
-  
 
 // generic
 async function readInputFilesAsDataURL(files, options = {}) {
@@ -158,17 +146,15 @@ async function facets(targetEl, items) {
       [item.prediction[1].className]: item.prediction[1].probability
     };
   });
-  console.log('facetsData', facetsData);
 
   // config
   var facetsDiveEl = targetEl.querySelector('facets-dive');
-  console.log('facetsDiveEl', facetsDiveEl);
   
   // the order of these calls matters
   const classNames = _.uniq(_.flatMap(items, item => item.prediction.map(p => p.className)));
   console.log('classNames', classNames);
   facetsDiveEl.data = facetsData;
-  // facetsDiveEl.hideInfoCard = true;
+  facetsDiveEl.hideInfoCard = false;
   facetsDiveEl.colorBy = classNames[0];
   facetsDiveEl.verticalFacet = classNames[0];
   facetsDiveEl.horizontalFacet = classNames[1];
