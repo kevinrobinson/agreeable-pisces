@@ -185,16 +185,38 @@ async function createFacetsAtlas(items, width, height) {
 }
 
 
+async function initForModelKey(outEl, modelKey) {
+  document.querySelector('#model-button').disabled = 'disabled';
+  document.querySelector('#model-button').innerHTML = 'Loading...';
+  const {model, maxPredictions} = await loadModel(modelKey);
+  document.querySelector('#model-button').innerHTML = 'Loaded.';
+  init(outEl, model, maxPredictions);
+}
+
 async function main() {
   const outEl = document.querySelector('.TileTwo');
+
+  // init from query string
+  const queryString = window.location.search;
+  if (queryString.indexOf('?model=') === 0) {
+    const modelKey = queryString.slice(6).replace(/[^a-zA-Z0-9]/g,'');
+    document.querySelector('#model-key').value = modelKey;
+    initForModelKey(outEl, modelKey);
+  }
+  
+  // handler for loading model
+  document.querySelector('#model-button').addEventListener('click', e => {
+    const modelKey = document.querySelector('#model-key').value;
+    initForModelKey(outEl, modelKey);
+  });
+
+  // dump out predictions
   document.querySelector('#load-dump-json').addEventListener('change', async function(event) {
     const files = await readInputFilesAsText(event.target.files);
     const items = JSON.parse(files[0]);
     const predictionsCount = _.uniq(_.flatMap(items, item => item.prediction.map(p => p.className)));
     renderItems(outEl, predictionsCount, items);
   });
-  
-  document.querySelector('#model-button').addEventListener('click', );
 }
 
 main();
