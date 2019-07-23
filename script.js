@@ -120,8 +120,6 @@ function allowDump(outEl, items) {
     dt.setData("text/plain", JSON.stringify(items));
     clipboard.write(dt);
     console.log(JSON.stringify(items));
-    // download('data:application/json,' + JSON.stringify(items), 'dump.json');
-    alert('Downloaded and copied to the clipboard.');
     download('data:image/jpeg,' + items[0].uri, 'img.jpg');
   })
 }
