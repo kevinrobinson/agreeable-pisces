@@ -18,6 +18,7 @@ The core idea is to make these tools accessible to young people learning about A
 
 
 # screenshots
+(the way Facets Dive is included here only works on Chrome)
 ## in teachable machines, train model
 ![train](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-training.png?v=1563895444678)
 
