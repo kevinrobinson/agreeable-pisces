@@ -107,7 +107,7 @@ function renderItems(targetEl, maxPredictions, items) {
   });
   
   const facetsEl = targetEl.querySelector('.Facets');
-  facetsEl.innerHTML = '';
+  // facetsEl.innerHTML = '';
   facets(facetsEl, items);
   
   allowDump(targetEl, items);
@@ -150,13 +150,9 @@ async function readInputFilesAsText(files) {
   }));
 }
 
-async function facets(targetEl, items) {  
-  const el = document.createElement('div');
-  el.innerHTML = '<facets-dive width="800" height="600" />';
-  targetEl.appendChild(el);
-
-  // flatten, round for UX
-  var facetsData = items.map(function(item, i) {
+async function facets(targetEl, items) {
+  // flatten data, round numbers for UX
+  const facetsData = items.map(function(item, i) {
     return {
       i,
       hashedURI: hash64(item.uri),
@@ -166,17 +162,29 @@ async function facets(targetEl, items) {
       [item.prediction[1].className]: parseFloat(item.prediction[1].probability.toFixed(4))
     };
   });
-
-  // config
-  var facetsDiveEl = targetEl.querySelector('facets-dive');
-  
-  // the order of these calls matters
   const classNames = _.uniq(_.flatMap(items, item => item.prediction.map(p => p.className)));
+
+  // create or grab the polymer el
+  var facetsDiveEl = targetEl.querySelector('facets-dive');
+  var didCreate = false;
+  if (!facetsDiveEl) {
+    const el = document.createElement('div');
+    el.innerHTML = '<facets-dive width="800" height="600" />';
+    targetEl.appendChild(el);
+    facetsDiveEl = targetEl.querySelector('facets-dive');
+    didCreate = true;
+  }
+
+  // the order of these calls matters
+  // only set defaults; otherwise let user interactions stick through renders
   facetsDiveEl.data = facetsData;
-  facetsDiveEl.hideInfoCard = false;
-  facetsDiveEl.colorBy = classNames[0];
-  facetsDiveEl.verticalFacet = classNames[0];
-  facetsDiveEl.horizontalFacet = classNames[1];
+  if (didCreate) {
+    facetsDiveEl.hideInfoCard = false;
+    facetsDiveEl.colorBy = classNames[0];
+    facetsDiveEl.verticalFacet = classNames[0];
+    facetsDiveEl.verticalBuckets = 5;
+    facetsDiveEl.horizontalFacet = 'searchQuery';
+  }
   
   // sprite sheet
   // see https://github.com/PAIR-code/facets/tree/master/facets_dive#providing-sprites-for-dive-to-render
