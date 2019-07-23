@@ -18,9 +18,9 @@ async function loadModel(modelKey) {
 async function init(model, maxPredictions) {  
   const outEl = document.querySelector('.TileTwo');
     
+  document.querySelector('#dump').disabled = false;
   document.querySelector('#load-dump-json').addEventListener('change', async function(event) {
     const files = await readInputFilesAsText(event.target.files);
-    window.files = files;
     const items = JSON.parse(files[0]);
     renderItems(outEl, maxPredictions, items);
   });
@@ -107,7 +107,7 @@ function renderItems(targetEl, maxPredictions, items) {
 
 
 // generic
-async function readInputFilesAsDataURL(files, options = {}) {
+async function readInputFilesAsDataURL(files) {
   return await Promise.all([].map.call(files, file => {
     return new Promise(function(resolve, reject) {
       var reader = new FileReader();
@@ -120,7 +120,7 @@ async function readInputFilesAsDataURL(files, options = {}) {
 }
 
 // generic
-async function readInputFilesAsText(files, options = {}) {
+async function readInputFilesAsText(files) {
   return await Promise.all([].map.call(files, file => {
     return new Promise(function(resolve, reject) {
       var reader = new FileReader();
@@ -195,6 +195,8 @@ async function createFacetsAtlas(items, width, height) {
 
 
 async function main() {
+  document.querySelector('#dump').disabled = 'disabled';
+  
   document.querySelector('#model-button').addEventListener('click', async function(e) {
     document.querySelector('#model-button').disabled = 'disabled';
     document.querySelector('#model-button').innerHTML = 'Loading...';
