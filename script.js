@@ -92,13 +92,23 @@ async function init(outEl, model, maxPredictions) {
   // webcam
   var webcamEl = null;
   document.querySelector('#webcam-button').addEventListener('click', async function(e) {
-    if (webcamEl) return webcamEl.stop();
+    const WEBCAM_SNAP_INTERVAL = 1000;
+    if (webcamEl) {
+      webcamEl.src = null;
+      return;
+    }
     
     webcamEl = await startWebcam(outEl);
     
-    function tick() {
-      readAndPredictFromWebcam(webcamEl, maxPredictions);
-      if (webcamEl) setTimeout(tick, 1000);
+    async function tick() {
+      const {prediction, uri} = await readAndPredictFromWebcam(webcamEl, model, maxPredictions);
+      items.push({
+        prediction,
+        uri,
+        camera: true,
+        timestamp: new Date()
+      });
+      if (webcamEl) setTimeout(tick, WEBCAM_SNAP_INTERVAL);
     }
     tick();
   });
@@ -153,12 +163,14 @@ async function startWebcam(outEl) {
   return webcamEl;
 }
 
-function readAndPredictFromWebcam(webcamEl, maxPredictions) {
+async function readAndPredictFromWebcam(webcamEl, model, maxPredictions) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-  // ctx.drawImage(webcamEl, 0, 0, 400*3/4, 300/2); // no idea what this transform is from...
-  ctx.drawImage(webcamEl, 0, 0, 300, 200); // no idea what this transform is from...
-  document.body.appendChild(canvas);
+  ctx.drawImage(webcamEl, 0, 0, webcamEl.videoWidth, webcamEl.videoHeight);
+  // document.body.appendChild(canvas);
+  const prediction = await model.predict(canvas, false, maxPredictions);
+  const uri = canvas.toDataURL();
+  return {prediction, uri};
 }
 
   
