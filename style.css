@@ -34,6 +34,12 @@ h1 {
   color: white;
 }
 
+.Button-secondary {
+  background: #962565;
+  border: 1px solid #eee;
+  color: white;
+}
+
 .File {
   display: inline-block;
   position: relative;

@@ -57,6 +57,7 @@ async function init(outEl, model, maxPredictions) {
     for (var i = 0; i < files.length; i++) {
       const {prediction} = await predictForUri(model, maxPredictions, files[i].uri);
       items.push({
+        source: 'disk',
         prediction,
         uri: files[i].uri,
         filename: files[i].filename,
@@ -81,7 +82,12 @@ async function init(outEl, model, maxPredictions) {
     // predict
     for (var i = 0; i < uris.length; i++) {
       const {prediction} = await predictForUri(model, maxPredictions, uris[i]);
-      items.push({prediction, uri: uris[i], query});
+      items.push({
+        source: 'search',
+        prediction,
+        query,
+        uri: uris[i]
+      });
     }
 
     // render
@@ -92,22 +98,30 @@ async function init(outEl, model, maxPredictions) {
   // webcam
   var webcamEl = null;
   document.querySelector('#webcam-button').addEventListener('click', async function(e) {
-    const WEBCAM_SNAP_INTERVAL = 1000;
     if (webcamEl) {
-      webcamEl.src = null;
+      webcamEl.captureStream().getTracks().forEach(track => track.stop());
+      webcamEl.parentElement.removeChild(webcamEl);
+      webcamEl = null;
       return;
     }
     
     webcamEl = await startWebcam(outEl);
     
+    // loop
+    const WEBCAM_SNAP_INTERVAL = 1000;
     async function tick() {
+      // snapshot and predict
       const {prediction, uri} = await readAndPredictFromWebcam(webcamEl, model, maxPredictions);
       items.push({
+        source: 'webcam',
         prediction,
         uri,
         camera: true,
         timestamp: new Date()
       });
+      
+      // render
+      renderItems(outEl, maxPredictions, augmented(items));
       if (webcamEl) setTimeout(tick, WEBCAM_SNAP_INTERVAL);
     }
     tick();
@@ -166,7 +180,7 @@ async function startWebcam(outEl) {
 async function readAndPredictFromWebcam(webcamEl, model, maxPredictions) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-  ctx.drawImage(webcamEl, 0, 0, webcamEl.videoWidth, webcamEl.videoHeight);
+  ctx.drawImage(webcamEl, 0, 0, 200, 200);
   // document.body.appendChild(canvas);
   const prediction = await model.predict(canvas, false, maxPredictions);
   const uri = canvas.toDataURL();
@@ -186,15 +200,22 @@ async function readAndPredictFromWebcam(webcamEl, model, maxPredictions) {
 async function facets(targetEl, items) {
   // flatten data, round numbers for UX
   const facetsData = items.map(function(item, i) {
+    const classification = _.maxBy(item.prediction, 'probability').className;
+    const labels = item.prediction.reduce((map, p) => {
+      return {
+        ...map,
+        [`probability '${p.className}'`]: parseFloat(p.probability.toFixed(4))
+      };
+    }, {});
     return {
       i,
+      classification,
       hashedURI: hash64(item.uri),
-      fromSource: (item.filename ? 'file' : item.query ? 'search' : 'unknown'),
+      source: item.source || 'uknown',
       filename: item.filename || 'none',
       filenameLabel: item.filenameLabel || 'none',
       searchQuery: item.query || 'none',
-      [item.prediction[0].className]: parseFloat(item.prediction[0].probability.toFixed(4)),
-      [item.prediction[1].className]: parseFloat(item.prediction[1].probability.toFixed(4))
+      ...labels
     };
   });
   const classNames = _.uniq(_.flatMap(items, item => item.prediction.map(p => p.className)));
@@ -216,7 +237,6 @@ async function facets(targetEl, items) {
   facetsDiveEl.infoRenderer = facetsInfoRenderer.bind(null, items);
   if (didCreate) {
     facetsDiveEl.hideInfoCard = false;
-    facetsDiveEl.colorBy = classNames[0];
     facetsDiveEl.verticalFacet = classNames[0];
     facetsDiveEl.verticalBuckets = 4;
     facetsDiveEl.horizontalFacet = 'searchQuery';
