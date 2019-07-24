@@ -100,7 +100,7 @@ async function init(outEl, model, maxPredictions) {
   document.querySelector('#webcam-button').addEventListener('click', async function(e) {
     if (webcamEl) {
       webcamEl.captureStream().getTracks().forEach(track => track.stop());
-      webcamEl.parentElement.removeChild(webcamEl);
+      if (webcamEl.parentElement) webcamEl.parentElement.removeChild(webcamEl);
       webcamEl = null;
       return;
     }
@@ -155,6 +155,7 @@ function renderItems(targetEl, maxPredictions, items) {
 
 function allowDump(outEl, items) {
   document.querySelector('#dump').disabled = false;
+  document.querySelector('#dump').removeEventListener('click');
   document.querySelector('#dump').addEventListener('click', function(e) {
     var dt = new clipboard.DT();
     dt.setData("text/plain", JSON.stringify(items));
@@ -234,7 +235,7 @@ async function facets(targetEl, items) {
   var didCreate = false;
   if (!facetsDiveEl) {
     const el = document.createElement('div');
-    el.innerHTML = '<facets-dive width="100%" height="600" />';
+    el.innerHTML = '<facets-dive width="800" height="600" />';
     targetEl.appendChild(el);
     facetsDiveEl = targetEl.querySelector('facets-dive');
     didCreate = true;

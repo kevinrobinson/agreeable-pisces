@@ -40,6 +40,9 @@ The core idea is to make these tools accessible to young people learning about A
 ![search](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-search.png?v=1563895443000)
 ![more search](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-search-shiba.png?v=1563895443535)
 
+#### snapshots from webcam (eg, over time):
+![webcam](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F200-messi-over-time.png?v=1563987247392)
+
 #### from disk:
 ![from disk](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-upload.png?v=1563895445234)
 
@@ -61,6 +64,8 @@ The core idea is to make these tools accessible to young people learning about A
 #### color in the most shiba of shibas
 ![who is the most shiba](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F100-shiba.png?v=1563923727409)
 
+#### where does the computer see messi
+![messi](https://cdn.glitch.com/ab9b24c1-0ef7-44eb-8d1f-fa5b8a84c7c3%2F200-not-messi.png?v=1563987247559)
 
 ### share
 #### save
