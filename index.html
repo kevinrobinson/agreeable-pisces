@@ -12,11 +12,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
     <script src="/clipboard-polyfill.js"></script>
     
-    <!-- polymer, for facets -->
-    <!-- load webcomponents bundle, which includes all the necessary polyfills -->
-    <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.2.10/webcomponents-bundle.js"></script>
-    <!-- load the element -->
-    <link rel="import" href="./facets-jupyter.html">
+    <!-- polymer, for facets, see https://github.com/PAIR-code/what-if-tool/issues/7#issuecomment-514660444 -->
+    <script>
+      const hasAddedFacets = false;
+      window.addEventListener('WebComponentsReady', function() {
+        console.log('WebComponentsReady');
+        if (hasAddedFacets) return;
+        var link = document.createElement('link');
+        link.rel = "import";
+        link.href = "./facets-jupyter.html";
+        link.onload = function() {
+          console.log('facets tag loaded');
+        }
+        document.head.appendChild(link);
+        hasAddedFacets = true;
+        console.log('added facets tag');
+      });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.24/webcomponents-lite.js"></script>
     
     <!-- teachable machines-->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.1.2/dist/tf.min.js"></script>

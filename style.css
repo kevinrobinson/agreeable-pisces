@@ -43,6 +43,7 @@ h1 {
 
 .File-caption {
   cursor: pointer;
+  pointer-events: none;
 }
 
 .File > input {
