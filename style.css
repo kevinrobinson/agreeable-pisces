@@ -25,6 +25,13 @@ h1 {
   border: 1px solid #ccc;
   font-size: 12px;
   margin-right: 10px;
+  cursor: pointer;
+}
+
+.Button-primary {
+  background: #373fff;
+  border: 1px solid #eee;
+  color: white;
 }
 
 .File {
@@ -167,4 +174,5 @@ section {
 
 .load-example-link {
   font-size: 12px;
+  color: #999;
 }

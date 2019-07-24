@@ -45,6 +45,7 @@ async function loadModel(modelKey) {
 async function init(outEl, model, maxPredictions) {  
   document.querySelector('#dump').disabled = 'disabled';
   
+  // state across changes to dataset
   var items = [];
   
   // load images
@@ -85,7 +86,7 @@ async function init(outEl, model, maxPredictions) {
     }
 
     // render
-    renderItems(outEl, maxPredictions, items);
+    renderItems(outEl, maxPredictions, augmented(items));
   });
 }
 
@@ -287,6 +288,30 @@ function renderResults(targetEl, json) {
 
 
 
+// augmentation
+function augmented(items) {
+  return items;
+  
+//   var augs = [];
+//   items.forEach(item => {
+//     augs.push({
+//       item,
+//       augmented: false
+//     });
+//     augs.push({
+//       ...item,
+//       augmented: true,
+//       uri: augmentedUri(item.uri)
+//     });
+//   });
+//   return augs;
+}
+
+
+
+function augmentedUri(uri) {
+  // todo(kr)
+}
 
 // util bits
 function download(uri, filename) {
