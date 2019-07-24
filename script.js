@@ -154,9 +154,11 @@ function renderItems(targetEl, maxPredictions, items) {
 }
 
 function allowDump(outEl, items) {
-  document.querySelector('#dump').disabled = false;
-  document.querySelector('#dump').removeEventListener('click');
-  document.querySelector('#dump').addEventListener('click', function(e) {
+  const buttonEl = document.querySelector('#dump');
+  buttonEl.disabled = false;
+  const clonedButtonEl = buttonEl.cloneNode(true);
+  buttonEl.parentNode.replaceChild(clonedButtonEl, buttonEl);
+  clonedButtonEl.addEventListener('click', function(e) {
     var dt = new clipboard.DT();
     dt.setData("text/plain", JSON.stringify(items));
     clipboard.write(dt);
