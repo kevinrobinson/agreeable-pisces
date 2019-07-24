@@ -16,7 +16,7 @@
     <script>
       var hasAddedFacets = false;
       window.addEventListener('WebComponentsReady', function() {
-        console.log('WebComponentsReady');
+        console.log('> WebComponentsReady');
         if (hasAddedFacets) return;
         var link = document.createElement('link');
         link.rel = "import";
@@ -29,7 +29,7 @@
         console.log('> added facets tag');
       });
     </script>
-    <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.2.10/webcomponents-bundle.js"></script>
+    <script src="./polymer.js"></script>
     
     <!-- teachable machines-->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.1.2/dist/tf.min.js"></script>
