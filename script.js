@@ -69,7 +69,7 @@ async function init(outEl, model, maxPredictions) {
   });
   
   // search
-  document.querySelector('#search').addEventListener('click', async function(e) {
+  document.querySelector('#search-button').addEventListener('click', async function(e) {
     const query = prompt('Search for:');
     if (!query) return;
     
