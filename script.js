@@ -87,6 +87,21 @@ async function init(outEl, model, maxPredictions) {
     // render
     renderItems(outEl, maxPredictions, augmented(items));
   });
+  
+  
+  // webcam
+  var webcamEl = null;
+  document.querySelector('#webcam-button').addEventListener('click', async function(e) {
+    if (webcamEl) return webcamEl.stop();
+    
+    webcamEl = await startWebcam(outEl);
+    
+    function tick() {
+      readAndPredictFromWebcam(webcamEl, maxPredictions);
+      if (webcamEl) setTimeout(tick, 1000);
+    }
+    tick();
+  });
 }
 
 
@@ -126,6 +141,33 @@ function guessFilenameLabel(filename) {
   return filename.split(/[\._]/).slice(0, -1).filter(s => !s.match(/\d+/)).join('_');
 }
 
+
+
+// webcam
+async function startWebcam(outEl) {
+  // webcam has a square ratio and is flipped by default to match training
+  const webcamFlipped = true;
+  const webcamEl = await tmImage.getWebcam(200, 200, 'front', webcamFlipped);
+  webcamEl.play();
+  outEl.appendChild(webcamEl);
+  return webcamEl;
+}
+
+function readAndPredictFromWebcam(webcamEl, maxPredictions) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  // ctx.drawImage(webcamEl, 0, 0, 400*3/4, 300/2); // no idea what this transform is from...
+  ctx.drawImage(webcamEl, 0, 0, 300, 200); // no idea what this transform is from...
+  document.body.appendChild(canvas);
+}
+
+  
+//   // predict can take in an image, video or canvas html element
+//     // we set flip to true since the webcam was only flipped in CSS
+//     const flip = true;
+    // const prediction = await model.predict(webcamEl, flip, maxPredictions);
+//     return prediction;
+// }
 
 
 // facets
