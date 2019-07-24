@@ -73,7 +73,6 @@ async function init(outEl, model, maxPredictions) {
     const query = prompt('Search for:');
     if (!query) return;
     
-    
     const json = await fetchJson(query, 'abc');
     const uris = (json.items || []).map(item => item.image.thumbnailLink);
     // const uris = (json.items || []).map(item => item.link);
