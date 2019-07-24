@@ -114,13 +114,14 @@ async function init(outEl, model, maxPredictions) {
       // snapshot and predict
       const {prediction, uri} = await readAndPredictFromWebcam(webcamEl, model, maxPredictions);
       const timestamp = (new Date()).getTime();
+      console.log('ts:', startTimestamp, timestamp, Math.round((timestamp - startTimestamp)/1000/60));
       items.push({
         source: 'webcam',
         camera: true,
         prediction,
         uri,
         timestamp,
-        elapsedSeconds: Math.round((timestamp - startTimestamp)/1000/60)
+        elapsedSeconds: Math.round((timestamp - startTimestamp)/1000)
       });
       
       // render
@@ -176,7 +177,7 @@ async function startWebcam(outEl) {
   const webcamFlipped = true;
   const webcamEl = await tmImage.getWebcam(200, 200, 'front', webcamFlipped);
   webcamEl.play();
-  outEl.appendChild(webcamEl);
+  // outEl.appendChild(webcamEl);
   return webcamEl;
 }
 
@@ -219,10 +220,10 @@ async function facets(targetEl, items) {
       classification,
       hashedURI: hash64(item.uri),
       source: item.source || 'uknown',
-      filename: item.filename || 'none',
-      filenameLabel: item.filenameLabel || 'none',
-      searchQuery: item.query || 'none',
-      elapsedSeconds: item.elapsedSeconds || 'none',
+      filename: item.filename,
+      filenameLabel: item.filenameLabel,
+      searchQuery: item.query,
+      elapsedSeconds: item.elapsedSeconds,
       ...labels
     };
   });
@@ -306,10 +307,17 @@ function facetsInfoRenderer(items, selectedObject, elem) {
   // copied
   for (const field in selectedObject) {
     // modified
-    if (field )
+    if (['i', 'hashedURI'].indexOf(field) !== -1) {
+      continue;
+    }
     if (!selectedObject.hasOwnProperty(field)) {
       continue;
     }
+    // modified
+    if (selectedObject[field] === undefined) {
+      continue;
+    }
+    
     const dt = document.createElement('dt');
     dt.textContent = field;
     dl.appendChild(dt);
