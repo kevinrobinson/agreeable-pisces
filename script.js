@@ -106,18 +106,21 @@ async function init(outEl, model, maxPredictions) {
     }
     
     webcamEl = await startWebcam(outEl);
+    var startTimestamp = (new Date()).getTime();
     
     // loop
     const WEBCAM_SNAP_INTERVAL = 1000;
     async function tick() {
       // snapshot and predict
       const {prediction, uri} = await readAndPredictFromWebcam(webcamEl, model, maxPredictions);
+      const timestamp = (new Date()).getTime();
       items.push({
         source: 'webcam',
+        camera: true,
         prediction,
         uri,
-        camera: true,
-        timestamp: new Date()
+        timestamp,
+        elapsedSeconds: Math.round((timestamp - startTimestamp)/1000/60)
       });
       
       // render
@@ -197,6 +200,10 @@ async function readAndPredictFromWebcam(webcamEl, model, maxPredictions) {
 
 
 // facets
+function textLabelForClassName(className) {
+  return `probabilty ${className}`;
+}
+
 async function facets(targetEl, items) {
   // flatten data, round numbers for UX
   const facetsData = items.map(function(item, i) {
@@ -204,7 +211,7 @@ async function facets(targetEl, items) {
     const labels = item.prediction.reduce((map, p) => {
       return {
         ...map,
-        [`probability '${p.className}'`]: parseFloat(p.probability.toFixed(4))
+        [textLabelForClassName(p.className)]: parseFloat(p.probability.toFixed(4))
       };
     }, {});
     return {
@@ -215,6 +222,7 @@ async function facets(targetEl, items) {
       filename: item.filename || 'none',
       filenameLabel: item.filenameLabel || 'none',
       searchQuery: item.query || 'none',
+      elapsedSeconds: item.elapsedSeconds || 'none',
       ...labels
     };
   });
@@ -237,7 +245,7 @@ async function facets(targetEl, items) {
   facetsDiveEl.infoRenderer = facetsInfoRenderer.bind(null, items);
   if (didCreate) {
     facetsDiveEl.hideInfoCard = false;
-    facetsDiveEl.verticalFacet = classNames[0];
+    facetsDiveEl.verticalFacet = textLabelForClassName(classNames[0]);
     facetsDiveEl.verticalBuckets = 4;
     facetsDiveEl.horizontalFacet = 'searchQuery';
   }
