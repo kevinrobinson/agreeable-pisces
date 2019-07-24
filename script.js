@@ -201,7 +201,7 @@ async function readAndPredictFromWebcam(webcamEl, model, maxPredictions) {
 
 // facets
 function textLabelForClassName(className) {
-  return `probabilty ${className}`;
+  return `${className} score`;
 }
 
 async function facets(targetEl, items) {
@@ -248,6 +248,8 @@ async function facets(targetEl, items) {
     facetsDiveEl.verticalFacet = textLabelForClassName(classNames[0]);
     facetsDiveEl.verticalBuckets = 4;
     facetsDiveEl.horizontalFacet = 'searchQuery';
+    // facetsDiveEl.tweenDuration = 0;
+    // facetsDiveEl.fadeDuration = 0;
   }
   
   // sprite sheet
@@ -303,6 +305,8 @@ function facetsInfoRenderer(items, selectedObject, elem) {
   
   // copied
   for (const field in selectedObject) {
+    // modified
+    if (field )
     if (!selectedObject.hasOwnProperty(field)) {
       continue;
     }
