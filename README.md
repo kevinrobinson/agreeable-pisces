@@ -1,6 +1,6 @@
 agreeable-pisces
 =================
-experiment to visualize how well your Teachable Machines model generalizes to new data
+experiment to visualize how well your Teachable Machines model generalizes to other data
 
 - demo: [is it a shiba inu or a maine coon cat?](https://agreeable-pisces.glitch.me/?model=2019072393705shibamaincoon10)
 - glitch: [https://glitch.com/edit/#!/agreeable-pisces](https://glitch.com/edit/#!/agreeable-pisces)

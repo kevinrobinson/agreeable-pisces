@@ -109,7 +109,7 @@ async function init(outEl, model, maxPredictions) {
     var startTimestamp = (new Date()).getTime();
     
     // loop
-    const WEBCAM_SNAP_INTERVAL = 1000;
+    const WEBCAM_SNAP_INTERVAL = 4000;
     async function tick() {
       // snapshot and predict
       const {prediction, uri} = await readAndPredictFromWebcam(webcamEl, model, maxPredictions);
