@@ -31,12 +31,14 @@ async function main() {
 
 async function loadModel(modelKey) {
   // the json file (model topology) has a reference to the bin file (model weights)
-  const checkpointURL = `https://storage.googleapis.com/tm-mobilenet/${modelKey}/model.json`;
+  const checkpointURL = `${modelKey}model.json`;
   // the metatadata json file contains the text labels of your model and additional information
-  const metadataURL = `https://storage.googleapis.com/tm-mobilenet/${modelKey}/metadata.json`;
+  const metadataURL = `${modelKey}metadata.json`;
 
+  console.log('checkpointURL', checkpointURL);
+  console.log('metadataURL', metadataURL);
   // load the model and metadata
-  const model = await tmImage.mobilenet.load(checkpointURL, metadataURL);
+  const model = await tmImage.load(checkpointURL, metadataURL);
   const maxPredictions = model.getTotalClasses();
   return {model, maxPredictions};
 }

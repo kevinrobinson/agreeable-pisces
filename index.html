@@ -27,8 +27,8 @@
     <script src="./webcomponents-lite.js"></script>
     
     <!-- teachable machines-->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.1.2/dist/tf.min.js"></script>
-    <script src="https://storage.googleapis.com/tm-pro/v0.2.0/teachablemachine-image.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
     <script src="/script.js" defer></script>
   </head>  
   <body>
@@ -44,9 +44,9 @@
       <section>
         <div class="Label">1. Load trained model</div>
         <div class="Model">
-          <input id="model-key" type="text" placeholder="eg, 20190723110514shibamainecoon200" />
+          <input id="model-key" type="text" placeholder="image model URL from Teachable Machine" />
           <button class="Button" id="model-button">Use model</button>
-          <a class="load-example-link" href="?model=20190723110514shibamainecoon200">example</a>
+          <a class="load-example-link" href="#">example</a>
         </div>
       </section>
       
