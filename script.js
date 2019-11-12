@@ -4,12 +4,15 @@ var clipboard = window.clipboard;
 
 
 async function main() {
+  const exampleURL = 'https://teachablemachine.withgoogle.com/models/oX1iyaiu/';
+  document.querySelector('.load-example-link').href = `?model=${encodeURIComponent(exampleURL)}`;
+
   const outEl = document.querySelector('.TileTwo');
 
   // init from query string
   const queryString = window.location.search;
   if (queryString.indexOf('?model=') === 0) {
-    const modelKey = queryString.slice(6).replace(/[^a-zA-Z0-9]/g,'');
+    const modelKey = decodeURIComponent(queryString.slice(7));
     document.querySelector('#model-key').value = modelKey;
     initForModelKey(outEl, modelKey);
   }
